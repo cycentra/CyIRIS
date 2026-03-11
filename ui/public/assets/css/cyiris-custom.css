@@ -1,0 +1,80 @@
+/* CyIRIS Custom Theme - Minimal & Safe */
+/* Only brand colors - preserves all original backgrounds and text colors */
+
+:root {
+    --cyiris-primary: #b06eff;
+    --cyiris-primary-dark: #8c4fd4;
+    --cyiris-secondary: #28a745;
+}
+
+.btn-primary, .btn-primary:not(:disabled):not(.disabled).active, .btn-primary:not(:disabled):not(.disabled):active {
+    background-color: var(--cyiris-primary) !important;
+    border-color: var(--cyiris-primary) !important;
+    color: #ffffff !important;
+}
+
+.btn-primary:hover {
+    background-color: var(--cyiris-primary-dark) !important;
+    border-color: var(--cyiris-primary-dark) !important;
+    color: #ffffff !important;
+}
+
+.btn-success {
+    background-color: var(--cyiris-secondary) !important;
+    border-color: var(--cyiris-secondary) !important;
+    color: #ffffff !important;
+}
+
+a:not(.btn):not(.nav-link):not(.dropdown-item) { color: var(--cyiris-primary); }
+a:not(.btn):not(.nav-link):not(.dropdown-item):hover { color: var(--cyiris-primary-dark); }
+
+.nav-link.active, .sidebar .nav-item.active .nav-link {
+    background-color: var(--cyiris-primary) !important;
+    color: #ffffff !important;
+}
+
+.nav-tabs .nav-link.active {
+    background-color: var(--cyiris-primary) !important;
+    border-color: var(--cyiris-primary) !important;
+    color: #ffffff !important;
+}
+
+.card-header {
+    background: linear-gradient(135deg, var(--cyiris-primary) 0%, var(--cyiris-primary-dark) 100%) !important;
+    color: #ffffff !important;
+}
+
+.modal-header {
+    background: linear-gradient(135deg, var(--cyiris-primary) 0%, var(--cyiris-primary-dark) 100%) !important;
+    color: #ffffff !important;
+}
+
+.modal-header .close { color: #ffffff !important; opacity: 0.8; }
+
+.form-control:focus, .custom-select:focus {
+    border-color: var(--cyiris-primary) !important;
+    box-shadow: 0 0 0 0.2rem rgba(176, 110, 255, 0.25) !important;
+}
+
+.table-hover tbody tr:hover { background-color: rgba(176, 110, 255, 0.05) !important; }
+
+.pagination .page-item.active .page-link {
+    background-color: var(--cyiris-primary) !important;
+    border-color: var(--cyiris-primary) !important;
+    color: #ffffff !important;
+}
+
+.progress-bar { background-color: var(--cyiris-primary) !important; }
+.badge-primary { background-color: var(--cyiris-primary) !important; color: #ffffff !important; }
+.badge-success { background-color: var(--cyiris-secondary) !important; color: #ffffff !important; }
+
+body::after {
+    content: "Powered by Cycentra";
+    position: fixed;
+    bottom: 10px;
+    right: 10px;
+    font-size: 10px;
+    color: rgba(176, 110, 255, 0.3);
+    pointer-events: none;
+    z-index: 9999;
+}

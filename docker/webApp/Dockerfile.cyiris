@@ -1,0 +1,106 @@
+#  CyIRIS Custom Build
+#  Based on DFIR-IRIS v2.4.20
+#  © 2026 Cycentra
+#
+#  This Dockerfile builds CyIRIS from source with custom branding
+#  Logo files should be replaced in ui/public/assets/img/ before building
+
+####################
+# COMPILE JS IMAGE #
+####################
+FROM node:20-alpine AS compile-js-image
+
+COPY ui/ /ui
+
+RUN rm -rf /ui/{node_modules,dist}
+
+WORKDIR /ui
+
+RUN npm ci
+RUN npm run build
+
+#################
+# COMPILE IMAGE #
+#################
+FROM python:3.12 AS compile-image
+RUN apt-get update
+
+RUN python -m venv /opt/venv
+# Make sure we use the virtualenv:
+ENV PATH="/opt/venv/bin:$PATH"
+
+COPY source/dependencies /dependencies
+COPY source/requirements.txt /
+
+RUN pip3 install -r requirements.txt
+
+###############
+# BUILD IMAGE #
+###############
+FROM python:3.12 AS iriswebapp
+ENV PYTHONUNBUFFERED=1 DOCKERIZED=1
+
+# CyIRIS branding
+ENV CYIRIS_VERSION="1.0.0"
+ENV CYIRIS_BRANDING="enabled"
+ENV CYIRIS_THEME="cycentra"
+
+LABEL org.opencontainers.image.source="https://github.com/cycentra/CyIRIS"
+LABEL org.opencontainers.image.description="CyIRIS - Cycentra Incident Response & Investigation System"
+LABEL org.opencontainers.image.licenses="LGPL-3.0"
+LABEL maintainer="Cycentra Team"
+
+COPY --from=compile-image /opt/venv /opt/venv
+
+# Make sure we use the virtualenv:
+ENV PATH="/opt/venv/bin:$PATH"
+
+RUN apt update
+RUN apt install -y p7zip-full pgp rsync postgresql-client curl
+
+RUN mkdir /iriswebapp/
+RUN mkdir -p /home/iris/certificates/{rootCA,web_certificates}
+RUN mkdir -p /home/iris/user_templates
+RUN mkdir -p /home/iris/server_data
+RUN mkdir -p /home/iris/server_data/backup
+RUN mkdir -p /home/iris/server_data/updates
+RUN mkdir -p /home/iris/server_data/custom_assets
+RUN mkdir -p /home/iris/server_data/datastore
+
+WORKDIR /iriswebapp
+
+COPY docker/webApp/iris-entrypoint.sh .
+COPY docker/webApp/wait-for-iriswebapp.sh .
+COPY ./source .
+
+# Copy compiled UI with custom logos already replaced
+COPY --from=compile-js-image /ui/dist/ /iriswebapp/static/
+
+# Add execution right to binaries needed by evtx2splunk for iris_evtx module
+RUN chmod +x /iriswebapp/dependencies/evtxdump_binaries/linux/x64/fd
+RUN chmod +x /iriswebapp/dependencies/evtxdump_binaries/linux/x64/evtx_dump
+
+RUN chmod +x iris-entrypoint.sh
+RUN chmod +x wait-for-iriswebapp.sh
+
+# Inject custom CSS into HTML templates
+RUN find /iriswebapp -name "*.html" -type f -exec \
+    sed -i '/<\/head>/i\    <link rel="stylesheet" href="/static/assets/css/cyiris-custom.css">' {} \; \
+    2>/dev/null || true
+
+# Update application name from IRIS to CyIRIS
+RUN if [ -f /iriswebapp/app/__init__.py ]; then \
+        sed -i 's/IRIS/CyIRIS/g' /iriswebapp/app/__init__.py 2>/dev/null || true; \
+    fi
+
+# Add CyIRIS version file
+RUN echo "CyIRIS v${CYIRIS_VERSION}" > /iriswebapp/CYIRIS_VERSION.txt && \
+    echo "Based on DFIR-IRIS v2.4.20" >> /iriswebapp/CYIRIS_VERSION.txt && \
+    echo "Built: $(date -u +'%Y-%m-%d %H:%M:%S UTC')" >> /iriswebapp/CYIRIS_VERSION.txt && \
+    echo "Source: Custom build with Cycentra branding" >> /iriswebapp/CYIRIS_VERSION.txt
+
+# Health check
+HEALTHCHECK --interval=30s --timeout=10s --start-period=60s --retries=3 \
+    CMD curl -f http://localhost:8000/login || exit 1
+
+# Inherit entrypoint from base configuration

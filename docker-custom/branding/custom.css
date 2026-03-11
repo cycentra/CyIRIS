@@ -1,0 +1,319 @@
+/* CyIRIS Custom Theme */
+/* Cycentra Branding - Purple & Green */
+
+:root {
+    /* CyIRIS Brand Colors */
+    --cyiris-primary: #b06eff;        /* Purple - Primary brand color */
+    --cyiris-primary-dark: #8c4fd4;   /* Darker purple for hover states */
+    --cyiris-secondary: #28a745;      /* Green - Cycentra accent */
+    --cyiris-accent: #f5c518;         /* Gold - Highlights */
+    --cyiris-dark: #1a1a1a;          /* Dark background */
+    --cyiris-light: #f8f9fa;         /* Light background */
+    --cyiris-border: #dee2e6;        /* Border color */
+}
+
+/* Override primary button colors */
+.btn-primary,
+.btn-primary:not(:disabled):not(.disabled).active,
+.btn-primary:not(:disabled):not(.disabled):active {
+    background-color: var(--cyiris-primary) !important;
+    border-color: var(--cyiris-primary) !important;
+    color: #fff !important;
+}
+
+.btn-primary:hover {
+    background-color: var(--cyiris-primary-dark) !important;
+    border-color: var(--cyiris-primary-dark) !important;
+}
+
+/* Secondary button - Cycentra green */
+.btn-success,
+.btn-secondary {
+    background-color: var(--cyiris-secondary) !important;
+    border-color: var(--cyiris-secondary) !important;
+}
+
+.btn-success:hover,
+.btn-secondary:hover {
+    background-color: #218838 !important;
+    border-color: #1e7e34 !important;
+}
+
+/* Navigation bar */
+.navbar,
+.sidebar {
+    background: linear-gradient(135deg, var(--cyiris-dark) 0%, #2d2d2d 100%) !important;
+}
+
+.navbar-brand,
+.sidebar-brand {
+    color: var(--cyiris-primary) !important;
+    font-weight: 600;
+}
+
+/* Active nav items */
+.nav-link.active,
+.sidebar .nav-item.active .nav-link {
+    background-color: var(--cyiris-primary) !important;
+    color: #fff !important;
+}
+
+.nav-link:hover,
+.sidebar .nav-link:hover {
+    background-color: rgba(176, 110, 255, 0.2) !important;
+    color: var(--cyiris-primary) !important;
+}
+
+/* Links */
+a {
+    color: var(--cyiris-primary);
+}
+
+a:hover {
+    color: var(--cyiris-primary-dark);
+}
+
+/* Cards and panels */
+.card-header {
+    background: linear-gradient(135deg, var(--cyiris-primary) 0%, var(--cyiris-primary-dark) 100%) !important;
+    color: #fff !important;
+    border-bottom: 2px solid var(--cyiris-secondary);
+}
+
+/* Tables */
+.table-hover tbody tr:hover {
+    background-color: rgba(176, 110, 255, 0.1);
+}
+
+.table thead th {
+    background-color: var(--cyiris-dark);
+    color: #fff;
+    border-color: var(--cyiris-border);
+}
+
+/* Badges */
+.badge-primary {
+    background-color: var(--cyiris-primary) !important;
+}
+
+.badge-success {
+    background-color: var(--cyiris-secondary) !important;
+}
+
+.badge-warning {
+    background-color: var(--cyiris-accent) !important;
+    color: #1a1a1a !important;
+}
+
+/* Progress bars */
+.progress-bar {
+    background-color: var(--cyiris-primary);
+}
+
+/* Forms */
+.form-control:focus,
+.custom-select:focus {
+    border-color: var(--cyiris-primary);
+    box-shadow: 0 0 0 0.2rem rgba(176, 110, 255, 0.25);
+}
+
+/* Alerts */
+.alert-primary {
+    background-color: rgba(176, 110, 255, 0.1);
+    border-color: var(--cyiris-primary);
+    color: var(--cyiris-primary-dark);
+}
+
+.alert-success {
+    background-color: rgba(40, 167, 69, 0.1);
+    border-color: var(--cyiris-secondary);
+    color: #155724;
+}
+
+/* Login page customization */
+.login-container,
+.login-box {
+    background: linear-gradient(135deg, #1a1a1a 0%, #2d2d2d 100%);
+    border: 2px solid var(--cyiris-primary);
+    border-radius: 12px;
+}
+
+.login-logo {
+    filter: drop-shadow(0 0 10px rgba(176, 110, 255, 0.5));
+}
+
+/* Timeline styling (for case timelines) */
+.timeline::before {
+    background-color: var(--cyiris-primary);
+}
+
+.timeline-item .timeline-marker {
+    background-color: var(--cyiris-primary);
+    border-color: var(--cyiris-primary);
+}
+
+.timeline-item:hover .timeline-content {
+    border-color: var(--cyiris-primary);
+    box-shadow: 0 0 15px rgba(176, 110, 255, 0.3);
+}
+
+/* Data tables */
+.dataTable thead th {
+    background-color: var(--cyiris-dark);
+    color: #fff;
+}
+
+.dataTable tbody tr.selected {
+    background-color: rgba(176, 110, 255, 0.15);
+}
+
+/* Modal headers */
+.modal-header {
+    background: linear-gradient(135deg, var(--cyiris-primary) 0%, var(--cyiris-primary-dark) 100%);
+    color: #fff;
+    border-bottom: 2px solid var(--cyiris-secondary);
+}
+
+.modal-header .close {
+    color: #fff;
+    opacity: 0.8;
+}
+
+.modal-header .close:hover {
+    opacity: 1;
+}
+
+/* Tabs */
+.nav-tabs .nav-link.active {
+    background-color: var(--cyiris-primary) !important;
+    border-color: var(--cyiris-primary) !important;
+    color: #fff !important;
+}
+
+.nav-tabs .nav-link:hover {
+    border-color: var(--cyiris-primary);
+    color: var(--cyiris-primary);
+}
+
+/* Dropdown menus */
+.dropdown-item:hover,
+.dropdown-item:focus {
+    background-color: rgba(176, 110, 255, 0.1);
+    color: var(--cyiris-primary);
+}
+
+.dropdown-item.active,
+.dropdown-item:active {
+    background-color: var(--cyiris-primary);
+    color: #fff;
+}
+
+/* Pagination */
+.pagination .page-item.active .page-link {
+    background-color: var(--cyiris-primary);
+    border-color: var(--cyiris-primary);
+}
+
+.pagination .page-link:hover {
+    background-color: rgba(176, 110, 255, 0.1);
+    border-color: var(--cyiris-primary);
+    color: var(--cyiris-primary);
+}
+
+/* Loading spinner */
+.spinner-border-primary,
+.spinner-grow-primary {
+    color: var(--cyiris-primary);
+}
+
+/* Custom scrollbar */
+::-webkit-scrollbar-thumb {
+    background: var(--cyiris-primary);
+    border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+    background: var(--cyiris-primary-dark);
+}
+
+/* Footer branding */
+.footer {
+    background-color: var(--cyiris-dark);
+    color: #fff;
+    border-top: 2px solid var(--cyiris-primary);
+}
+
+.footer a {
+    color: var(--cyiris-primary);
+}
+
+.footer a:hover {
+    color: var(--cyiris-secondary);
+}
+
+/* Case status badges - custom colors */
+.case-status-open {
+    background-color: #ff3b3b !important;
+}
+
+.case-status-investigating {
+    background-color: var(--cyiris-accent) !important;
+    color: #1a1a1a !important;
+}
+
+.case-status-closed {
+    background-color: var(--cyiris-secondary) !important;
+}
+
+/* IOC severity indicators */
+.ioc-severity-critical {
+    border-left: 4px solid #ff3b3b;
+    background-color: rgba(255, 59, 59, 0.05);
+}
+
+.ioc-severity-high {
+    border-left: 4px solid #ff8c00;
+    background-color: rgba(255, 140, 0, 0.05);
+}
+
+.ioc-severity-medium {
+    border-left: 4px solid var(--cyiris-accent);
+    background-color: rgba(245, 197, 24, 0.05);
+}
+
+.ioc-severity-low {
+    border-left: 4px solid var(--cyiris-secondary);
+    background-color: rgba(40, 167, 69, 0.05);
+}
+
+/* Dashboard widgets */
+.dashboard-widget {
+    border-top: 3px solid var(--cyiris-primary);
+    transition: transform 0.2s, box-shadow 0.2s;
+}
+
+.dashboard-widget:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 20px rgba(176, 110, 255, 0.2);
+}
+
+/* Search highlight */
+mark,
+.highlight {
+    background-color: rgba(245, 197, 24, 0.3);
+    color: inherit;
+    padding: 2px 4px;
+    border-radius: 3px;
+}
+
+/* Cycentra branding watermark (subtle) */
+body::after {
+    content: "Powered by Cycentra";
+    position: fixed;
+    bottom: 10px;
+    right: 10px;
+    font-size: 10px;
+    color: rgba(176, 110, 255, 0.3);
+    pointer-events: none;
+    z-index: 9999;
+}

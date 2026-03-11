@@ -1,0 +1,180 @@
+#  CyIRIS Custom Docker Compose
+#  Uses custom-branded images from GHCR or local builds
+#
+#  For local testing: Use local image tags (cyiris:latest)
+#  For production: Use GHCR images (ghcr.io/cycentra/cyiris:latest)
+
+services:
+  rabbitmq:
+    image: rabbitmq:3-management-alpine
+    container_name: cyiris-rabbitmq
+    restart: unless-stopped
+    environment:
+      - RABBITMQ_DEFAULT_USER=${RABBITMQ_USER:-iris}
+      - RABBITMQ_DEFAULT_PASS=${RABBITMQ_PASS:-ChangeMe!}
+      - RABBITMQ_SERVER_ADDITIONAL_ERL_ARGS=-rabbit tcp_listeners [5672]
+    volumes:
+      - rabbitmq_data:/var/lib/rabbitmq
+    networks:
+      - cyiris_backend
+
+  db:
+    image: postgres:15-alpine
+    container_name: cyiris-db
+    restart: unless-stopped
+    environment:
+      - POSTGRES_USER=${DB_USER:-postgres}
+      - POSTGRES_PASSWORD=${DB_PASS:-ChangeMe!}
+      - POSTGRES_DB=${DB_NAME:-iris_db}
+      - POSTGRES_ADMIN_USER=${DB_ADMIN_USER:-postgres}
+      - POSTGRES_ADMIN_PASSWORD=${DB_ADMIN_PASS:-ChangeMe!}
+    volumes:
+      - db_data:/var/lib/postgresql/data
+    networks:
+      - cyiris_backend
+
+  app:
+    # For local testing, use: cyiris:latest
+    # For production, use: ghcr.io/cycentra/cyiris:latest
+    image: ${CYIRIS_IMAGE:-cyiris:latest}
+    container_name: cyiris-app
+    restart: unless-stopped
+    command: ['nohup', './iris-entrypoint.sh', 'iriswebapp']
+    volumes:
+      - iris_downloads:/home/iris/downloads
+      - user_templates:/home/iris/user_templates
+      - server_data:/home/iris/server_data
+    depends_on:
+      - db
+      - rabbitmq
+    ports:
+      - "${CYIRIS_PORT:-8000}:8000"
+    environment:
+      # PostgreSQL settings
+      - POSTGRES_SERVER=db
+      - POSTGRES_PORT=5432
+      - POSTGRES_USER=${DB_USER:-postgres}
+      - POSTGRES_PASSWORD=${DB_PASS:-ChangeMe!}
+      - POSTGRES_DB=${DB_NAME:-iris_db}
+      - POSTGRES_ADMIN_USER=${DB_ADMIN_USER:-postgres}
+      - POSTGRES_ADMIN_PASSWORD=${DB_ADMIN_PASS:-ChangeMe!}
+      
+      # RabbitMQ settings
+      - RABBITMQ_HOST=rabbitmq
+      - RABBITMQ_PORT=5672
+      - RABBITMQ_USER=${RABBITMQ_USER:-iris}
+      - RABBITMQ_PASS=${RABBITMQ_PASS:-ChangeMe!}
+      - CELERY_BROKER=amqp://${RABBITMQ_USER:-iris}:${RABBITMQ_PASS:-ChangeMe!}@rabbitmq:5672//
+      
+      # Application settings
+      - IRIS_SECRET_KEY=${SECRET_KEY:-ChangeThisToAVeryLongRandomString!}
+      - IRIS_SECURITY_PASSWORD_SALT=${PASSWORD_SALT:-ChangeThisToAnotherLongRandomString!}
+      
+      # Authentication Type (local, oidc, oidc_proxy, ldap)
+      - IRIS_AUTHENTICATION_TYPE=${IRIS_AUTHENTICATION_TYPE:-local}
+      
+      # OIDC Direct Authentication (IRIS_AUTHENTICATION_TYPE=oidc)
+      - OIDC_ISSUER_URL=${OIDC_ISSUER_URL:-}
+      - OIDC_CLIENT_ID=${OIDC_CLIENT_ID:-cyiris}
+      - OIDC_CLIENT_SECRET=${OIDC_CLIENT_SECRET:-}
+      - OIDC_AUTH_ENDPOINT=${OIDC_AUTH_ENDPOINT:-}
+      - OIDC_TOKEN_ENDPOINT=${OIDC_TOKEN_ENDPOINT:-}
+      - OIDC_END_SESSION_ENDPOINT=${OIDC_END_SESSION_ENDPOINT:-}
+      - OIDC_SCOPES=${OIDC_SCOPES:-openid email profile}
+      - OIDC_MAPPING_USERNAME=${OIDC_MAPPING_USERNAME:-preferred_username}
+      - OIDC_MAPPING_EMAIL=${OIDC_MAPPING_EMAIL:-email}
+      
+      # OIDC Proxy Authentication (IRIS_AUTHENTICATION_TYPE=oidc_proxy)
+      - OIDC_IRIS_DISCOVERY_URL=${OIDC_IRIS_DISCOVERY_URL:-}
+      - OIDC_IRIS_ADMIN_ROLE_NAME=${OIDC_IRIS_ADMIN_ROLE_NAME:-}
+      - OIDC_IRIS_AUDIENCE=${OIDC_IRIS_AUDIENCE:-}
+      - OIDC_IRIS_VERIFY_TOKEN_EXPIRATION=${OIDC_IRIS_VERIFY_TOKEN_EXPIRATION:-True}
+      - OIDC_IRIS_TOKEN_VERIFY_MODE=${OIDC_IRIS_TOKEN_VERIFY_MODE:-userinfo}
+      - OIDC_IRIS_INIT_ADMINISTRATOR_EMAIL=${OIDC_IRIS_INIT_ADMINISTRATOR_EMAIL:-}
+      
+      # Admin user (created on first run)
+      - IRIS_ADM_USERNAME=${ADMIN_USER:-administrator}
+      - IRIS_ADM_PASSWORD=${ADMIN_PASS:-}
+      - IRIS_ADM_EMAIL=${ADMIN_EMAIL:-admin@cycentra.local}
+      
+      # CyIRIS branding
+      - CYIRIS_BRANDING=enabled
+      - CYIRIS_VERSION=1.0.0
+    networks:
+      - cyiris_backend
+      # - cyiris_frontend  # Disabled - nginx not needed for local testing
+
+  worker:
+    # Same image as app
+    image: ${CYIRIS_IMAGE:-cyiris:latest}
+    container_name: cyiris-worker
+    restart: unless-stopped
+    command: ['./wait-for-iriswebapp.sh', 'app:8000', './iris-entrypoint.sh', 'iris-worker']
+    volumes:
+      - iris_downloads:/home/iris/downloads
+      - user_templates:/home/iris/user_templates
+      - server_data:/home/iris/server_data
+    depends_on:
+      - db
+      - rabbitmq
+      - app
+    environment:
+      # PostgreSQL settings
+      - POSTGRES_SERVER=db
+      - POSTGRES_PORT=5432
+      - POSTGRES_USER=${DB_USER:-postgres}
+      - POSTGRES_PASSWORD=${DB_PASS:-ChangeMe!}
+      - POSTGRES_DB=${DB_NAME:-iris_db}
+      - POSTGRES_ADMIN_USER=${DB_ADMIN_USER:-postgres}
+      - POSTGRES_ADMIN_PASSWORD=${DB_ADMIN_PASS:-ChangeMe!}
+      
+      # RabbitMQ settings
+      - RABBITMQ_HOST=rabbitmq
+      - RABBITMQ_PORT=5672
+      - RABBITMQ_USER=${RABBITMQ_USER:-iris}
+      - RABBITMQ_PASS=${RABBITMQ_PASS:-ChangeMe!}
+      - CELERY_BROKER=amqp://${RABBITMQ_USER:-iris}:${RABBITMQ_PASS:-ChangeMe!}@rabbitmq:5672//
+      
+      # Application settings
+      - IRIS_SECRET_KEY=${SECRET_KEY:-ChangeThisToAVeryLongRandomString!}
+      - IRIS_SECURITY_PASSWORD_SALT=${PASSWORD_SALT:-ChangeThisToAnotherLongRandomString!}
+      
+      # Worker-specific
+      - IRIS_WORKER=True
+    networks:
+      - cyiris_backend
+
+  # nginx:  # Disabled for local testing - access app directly on port 8001
+  #   image: nginx:alpine
+  #   container_name: cyiris-nginx
+  #   restart: unless-stopped
+  #   ports:
+  #     - "${HTTPS_PORT:-443}:443"
+  #     - "${HTTP_PORT:-80}:80"
+  #   volumes:
+  #     - ./nginx.conf:/etc/nginx/nginx.conf:ro
+  #     - ./certs:/etc/nginx/certs:ro
+  #   depends_on:
+  #     - app
+  #   networks:
+  #     - cyiris_frontend
+
+volumes:
+  iris_downloads:
+    name: cyiris_downloads
+  user_templates:
+    name: cyiris_user_templates
+  server_data:
+    name: cyiris_server_data
+  db_data:
+    name: cyiris_db_data
+  rabbitmq_data:
+    name: cyiris_rabbitmq_data
+
+networks:
+  cyiris_backend:
+    name: cyiris_backend
+    driver: bridge
+  # cyiris_frontend:  # Disabled - nginx not needed for local testing
+  #   name: cyiris_frontend
+  #   driver: bridge

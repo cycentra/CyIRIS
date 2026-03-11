@@ -1,0 +1,77 @@
+#  CyIRIS Custom Docker Image
+#  Based on DFIR-IRIS v2.4.20
+#  © 2026 Cycentra
+#
+#  This Dockerfile creates a custom-branded version of DFIR-IRIS
+#  for use as CyIRIS (Cycentra Incident Response & Investigation System)
+
+# Start from official DFIR-IRIS webapp image
+FROM ghcr.io/dfir-iris/iriswebapp_app:v2.4.20 AS cyiris
+
+# Metadata
+LABEL org.opencontainers.image.source="https://github.com/cycentra/CyIRIS"
+LABEL org.opencontainers.image.description="CyIRIS - Cycentra Incident Response & Investigation System"
+LABEL org.opencontainers.image.licenses="LGPL-3.0"
+LABEL maintainer="Cycentra Team"
+
+# Set CyIRIS version
+ENV CYIRIS_VERSION="1.0.0"
+ENV CYIRIS_BRANDING="enabled"
+ENV CYIRIS_THEME="cycentra"
+
+# Create branding directory
+RUN mkdir -p /iriswebapp/static/assets/img/branding
+
+# Copy custom branding assets
+COPY branding/logo.ico /iriswebapp/static/assets/img/logo.ico
+COPY branding/logo.png /iriswebapp/static/assets/img/branding/cyiris-logo.png
+COPY branding/logo-alone.png /iriswebapp/static/assets/img/branding/cyiris-icon.png
+
+# Replace default logos with CyIRIS branding
+# Favicon
+RUN cp /iriswebapp/static/assets/img/logo.ico /iriswebapp/static/favicon.ico
+
+# Main logo (login page, header, navbar)
+RUN if [ -f /iriswebapp/static/assets/img/branding/cyiris-logo.png ]; then \
+        cp /iriswebapp/static/assets/img/branding/cyiris-logo.png /iriswebapp/static/assets/img/logo-alone-2-black.png && \
+        cp /iriswebapp/static/assets/img/branding/cyiris-logo.png /iriswebapp/static/assets/img/logo-white.png && \
+        cp /iriswebapp/static/assets/img/branding/cyiris-logo.png /iriswebapp/static/assets/img/logo-alone-2-white.png; \
+    fi
+
+# Copy custom CSS for theme overrides
+COPY branding/custom.css /iriswebapp/static/assets/css/cyiris-custom.css
+
+# Inject custom CSS into HTML templates
+# Find all HTML template files and add custom CSS reference
+RUN find /iriswebapp -name "*.html" -type f -exec \
+    sed -i '/<\/head>/i\    <link rel="stylesheet" href="/static/assets/css/cyiris-custom.css">' {} \; \
+    2>/dev/null || true
+
+# Update application name in config
+# This changes "IRIS" to "CyIRIS" in the UI
+RUN if [ -f /iriswebapp/app/__init__.py ]; then \
+        sed -i 's/IRIS/CyIRIS/g' /iriswebapp/app/__init__.py 2>/dev/null || true; \
+    fi
+
+# Add version file for tracking
+RUN echo "CyIRIS v${CYIRIS_VERSION}" > /iriswebapp/CYIRIS_VERSION.txt
+RUN echo "Based on DFIR-IRIS v2.4.20" >> /iriswebapp/CYIRIS_VERSION.txt
+RUN echo "Built: $(date -u +'%Y-%m-%d %H:%M:%S UTC')" >> /iriswebapp/CYIRIS_VERSION.txt
+
+# Ensure proper permissions
+RUN chmod -R 755 /iriswebapp/static
+RUN chmod 644 /iriswebapp/static/assets/css/cyiris-custom.css
+RUN chmod 644 /iriswebapp/static/assets/img/logo.ico
+
+# Keep the original entrypoint from base image
+# ENTRYPOINT and CMD are inherited from base DFIR-IRIS image
+
+# Health check
+HEALTHCHECK --interval=30s --timeout=10s --start-period=60s --retries=3 \
+    CMD curl -f http://localhost:8000/login || exit 1
+
+# Expose port (inherited from base, but explicitly documented)
+EXPOSE 8000
+
+# The base image already has the correct WORKDIR and ENTRYPOINT
+# We're just overlaying branding customizations
