@@ -1,30 +1,75 @@
 #!/bin/bash
-# Build and push CyCentra CyIRIS image to GHCR
-# Usage: ./build-and-push.sh [version]
-# Example: ./build-and-push.sh 1.0.0
-
+# ─────────────────────────────────────────────────────────────────────────────
+# build-and-push.sh — Build and push CyIRIS to ghcr.io/cycentra/cyiris
+#
+# Usage:
+#   ./build-and-push.sh           # builds v1.0 (default)
+#   ./build-and-push.sh v1.1      # builds specific version
+#
+# Prerequisites:
+#   export GITHUB_TOKEN=ghp_xxxxxxxxxxxx   (needs write:packages scope)
+#   export GITHUB_USER=your-github-username
+# ─────────────────────────────────────────────────────────────────────────────
 set -e
 
-VERSION="${1:-latest}"
-IMAGE="ghcr.io/cycentra/cyiris-app"
+cd "$(dirname "$0")"
 
-echo "Building ${IMAGE}:${VERSION} ..."
+IMAGE_NAME="ghcr.io/cycentra/cyiris"
+VERSION="${1:-v1.0}"
+VERSION_NUM="${VERSION#v}"
+BUILD_DATE=$(date -u +'%Y-%m-%dT%H:%M:%SZ')
+BUILD_REF=$(git rev-parse --short HEAD 2>/dev/null || echo "local")
 
-# Login to GHCR (needs a PAT with packages:write)
-echo "Logging in to ghcr.io..."
-echo "$GHCR_PAT" | docker login ghcr.io -u cycentra --password-stdin
+echo "========================================"
+echo "  Building CyIRIS $VERSION"
+echo "========================================"
+echo "  Image : $IMAGE_NAME:$VERSION_NUM"
+echo "  Also  : $IMAGE_NAME:latest"
+echo "  Date  : $BUILD_DATE"
+echo "  Ref   : $BUILD_REF"
+echo "========================================"
+echo ""
 
-# Build for linux/amd64 (server architecture)
+if [ -z "$GITHUB_TOKEN" ]; then
+  echo "❌  GITHUB_TOKEN not set."
+  echo "    export GITHUB_TOKEN=ghp_xxxx"
+  exit 1
+fi
+if [ -z "$GITHUB_USER" ]; then
+  echo "❌  GITHUB_USER not set."
+  echo "    export GITHUB_USER=your-github-username"
+  exit 1
+fi
+
+echo "🔐 Logging in to ghcr.io..."
+echo "$GITHUB_TOKEN" | docker login ghcr.io -u "$GITHUB_USER" --password-stdin
+
+docker buildx create --name cyiris-builder --use 2>/dev/null || \
+  docker buildx use cyiris-builder 2>/dev/null || true
+
+echo ""
+echo "🔨 Building (linux/amd64)..."
+echo ""
+
 docker buildx build \
   --platform linux/amd64 \
-  --tag "${IMAGE}:${VERSION}" \
-  --tag "${IMAGE}:latest" \
+  --file docker/Dockerfile \
+  --tag "$IMAGE_NAME:$VERSION_NUM" \
+  --tag "$IMAGE_NAME:latest" \
+  --build-arg BUILD_DATE="$BUILD_DATE" \
+  --build-arg BUILD_VERSION="$VERSION_NUM" \
+  --build-arg BUILD_REF="$BUILD_REF" \
   --push \
   .
 
 echo ""
-echo "✅ Done — pushed:"
-echo "   ${IMAGE}:${VERSION}"
-echo "   ${IMAGE}:latest"
+echo "========================================"
+echo "✅ Done!"
+echo "========================================"
 echo ""
-echo "Now update app.py CYIRIS_IMAGE_APP to: ${IMAGE}:latest"
+echo "📋 Published:"
+echo "   $IMAGE_NAME:$VERSION_NUM"
+echo "   $IMAGE_NAME:latest"
+echo ""
+echo "🔍 Verify:"
+echo "   docker pull $IMAGE_NAME:latest"
