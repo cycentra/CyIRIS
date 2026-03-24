@@ -1,62 +1,45 @@
-#  IRIS Source Code
-#  contact@dfir-iris.org
-#
-#  This program is free software; you can redistribute it and/or
-#  modify it under the terms of the GNU Lesser General Public
-#  License as published by the Free Software Foundation; either
-#  version 3 of the License, or (at your option) any later version.
-#
-#  This program is distributed in the hope that it will be useful,
-#  but WITHOUT ANY WARRANTY; without even the implied warranty of
-#  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
-#  Lesser General Public License for more details.
-#
-#  You should have received a copy of the GNU Lesser General Public License
-#  along with this program; if not, write to the Free Software Foundation,
-#  Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
+# CyCentra CyIRIS — deployment compose
+# This is the compose used for local development/testing only.
+# Production deployment is managed by cycentra360-backend app.py
+# which generates its own compose with only app + db.
 
 services:
-  rabbitmq:
-    extends:
-      file: docker-compose.base.yml
-      service: rabbitmq
+  cyiris-db:
+    image: postgres:15-alpine
+    restart: always
+    environment:
+      POSTGRES_PASSWORD: "${POSTGRES_PASSWORD:-iris_pg_pass}"
+      POSTGRES_USER: iris
+      POSTGRES_DB: iris_db
+    volumes:
+      - cyiris_db_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U iris -d iris_db"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+      start_period: 10s
 
-  db:
-    extends:
-      file: docker-compose.base.yml
-      service: db
-    image: ${DB_IMAGE_NAME:-ghcr.io/dfir-iris/iriswebapp_db}:${DB_IMAGE_TAG:-v2.4.20}
-
-
-  app:
-    extends:
-      file: docker-compose.base.yml
-      service: app
-    image: ${APP_IMAGE_NAME:-ghcr.io/dfir-iris/iriswebapp_app}:${APP_IMAGE_TAG:-v2.4.20}
-
-  worker:
-    extends:
-      file: docker-compose.base.yml
-      service: worker
-    image: ${APP_IMAGE_NAME:-ghcr.io/dfir-iris/iriswebapp_app}:${APP_IMAGE_TAG:-v2.4.20}
-
-
-  nginx:
-    extends:
-      file: docker-compose.base.yml
-      service: nginx
-    image: ${NGINX_IMAGE_NAME:-ghcr.io/dfir-iris/iriswebapp_nginx}:${NGINX_IMAGE_TAG:-v2.4.20}
-
+  cyiris:
+    image: ghcr.io/cycentra/cyiris-app:latest
+    restart: always
+    depends_on:
+      cyiris-db:
+        condition: service_healthy
+    ports:
+      - "4433:8000"
+    environment:
+      POSTGRES_SERVER: cyiris-db
+      POSTGRES_PORT: "5432"
+      POSTGRES_USER: iris
+      POSTGRES_DB: iris_db
+      POSTGRES_PASSWORD: "${POSTGRES_PASSWORD:-iris_pg_pass}"
+      POSTGRES_ADMIN_USER: iris
+      POSTGRES_ADMIN_PASSWORD: "${POSTGRES_PASSWORD:-iris_pg_pass}"
+      IRIS_SECRET_KEY: "${IRIS_SECRET_KEY:-change_in_production}"
+      IRIS_ADMIN_EMAIL: "${IRIS_ADMIN_EMAIL:-administrator@cycentra.com}"
+      IRIS_ADMIN_PASSWORD: "${IRIS_ADMIN_PASSWORD:-CyIRIS@Change2024!}"
+      OIDC_ENABLED: "false"
 
 volumes:
-  iris-downloads:
-  user_templates:
-  server_data:
-  db_data:
-
-networks:
-  iris_backend:
-    name: iris_backend
-  iris_frontend:
-    name: iris_frontend
-
+  cyiris_db_data:
