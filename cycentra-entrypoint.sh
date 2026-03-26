@@ -41,7 +41,7 @@ try:
     )
     cur = conn.cursor()
     cur.execute(
-        'UPDATE "User" SET password = %s, email = %s WHERE login = %s',
+        'UPDATE "user" SET password = %s, email = %s WHERE login = %s',
         (pw_hash, email, "administrator")
     )
     rows = cur.rowcount
