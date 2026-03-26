@@ -13,7 +13,7 @@ echo "[CyCentra] Waiting for IRIS to initialise..."
 READY=0
 for i in $(seq 1 24); do
     sleep 5
-    if curl -sf http://localhost:8000/api/ping >/dev/null 2>&1; then
+    if curl -sf http://localhost:8000/login >/dev/null 2>&1; then
         echo "[CyCentra] IRIS is up after $((i * 5))s"
         READY=1
         break
