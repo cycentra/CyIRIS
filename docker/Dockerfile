@@ -1,9 +1,3 @@
-# ─────────────────────────────────────────────────────────────────────────────
-# CyIRIS — CyCentra custom DFIR-IRIS image (built from source)
-# ghcr.io/cycentra/cyiris
-# Logos are baked in from ui/public/assets/img/ at build time
-# ─────────────────────────────────────────────────────────────────────────────
-
 ####################
 # COMPILE JS IMAGE #
 ####################
@@ -48,11 +42,8 @@ COPY --from=compile-image /opt/venv /opt/venv
 ENV PATH="/opt/venv/bin:$PATH"
 
 RUN apt-get update && apt-get install -y \
-    p7zip-full pgp rsync postgresql-client curl \
+    p7zip-full pgp rsync postgresql-client \
     && rm -rf /var/lib/apt/lists/*
-
-# Install psycopg2 for CyCentra credential reset
-RUN pip install psycopg2-binary --quiet 
 
 RUN mkdir -p /iriswebapp \
     /home/iris/certificates/{rootCA,web_certificates} \
@@ -65,7 +56,6 @@ COPY docker/webApp/iris-entrypoint.sh .
 COPY docker/webApp/wait-for-iriswebapp.sh .
 COPY ./source .
 
-# Compile JS — logos from ui/public/assets/img/ are baked in here
 COPY --from=compile-js-image /ui/dist/ /iriswebapp/static/
 
 RUN chmod +x dependencies/evtxdump_binaries/linux/x64/fd \
@@ -73,13 +63,12 @@ RUN chmod +x dependencies/evtxdump_binaries/linux/x64/fd \
              iris-entrypoint.sh \
              wait-for-iriswebapp.sh
 
-# ── CyCentra customisations ───────────────────────────────────────────────────
-# Patch page title
+# CyCentra branding — patch page title
 RUN find /iriswebapp -name "*.html" -exec \
     sed -i 's|IRIS - Incident Response Investigation System|CyIRIS — Incident Response|g' {} \; \
     2>/dev/null || true
 
-# Copy CyCentra credential-reset entrypoint
+# Copy CyCentra entrypoint
 COPY cycentra-entrypoint.sh /cycentra/cycentra-entrypoint.sh
 RUN chmod +x /cycentra/cycentra-entrypoint.sh
 
