@@ -40,18 +40,36 @@ try:
         password = os.environ.get("POSTGRES_PASSWORD", "iris_pg_pass"),
     )
     cur = conn.cursor()
-    cur.execute(
-        'UPDATE "user" SET password = %s, email = %s WHERE login = %s',
-        (pw_hash, email, "administrator")
-    )
-    rows = cur.rowcount
-    conn.commit()
-    cur.close()
-    conn.close()
-    if rows > 0:
-        print(f"[CyCentra] ✅ Credentials set — username: administrator | email: {email}")
+
+    cur.execute('SELECT id, "user" FROM "user" WHERE id = 1')
+    row = cur.fetchone()
+
+    if row:
+        current_username = row[1]
+        print(f"[CyCentra] Found admin user: {current_username}")
+        cur.execute(
+            'UPDATE "user" SET password = %s, email = %s, "user" = %s WHERE id = 1',
+            (pw_hash, email, email)
+        )
+        rows = cur.rowcount
+        conn.commit()
+        cur.close()
+        conn.close()
+        if rows > 0:
+            print(f"[CyCentra] ✅ Credentials set successfully")
+            print(f"[CyCentra]    Username : {email}")
+            print(f"[CyCentra]    Email    : {email}")
+            print(f"[CyCentra]    Password : as entered in CyCentra portal")
+        else:
+            print(f"[CyCentra] ⚠️  No rows updated")
     else:
-        print(f"[CyCentra] ⚠️  No rows updated — check DB connection")
+        print("[CyCentra] ⚠️  No user found with id=1")
+        cur.execute('SELECT id, "user", email FROM "user" LIMIT 5')
+        users = cur.fetchall()
+        print(f"[CyCentra]    Users in DB: {users}")
+        cur.close()
+        conn.close()
+
 except Exception as e:
     print(f"[CyCentra] ⚠️  Credential reset failed: {e}", file=sys.stderr)
 PYEOF
