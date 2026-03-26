@@ -25,12 +25,17 @@ if [ "$READY" = "1" ]; then
     python3 << 'PYEOF'
 import os, sys
 try:
-    from werkzeug.security import generate_password_hash
+    import bcrypt
     import psycopg2
 
     email    = os.environ.get("IRIS_ADMIN_EMAIL",    "administrator@cycentra.com")
     password = os.environ.get("IRIS_ADMIN_PASSWORD", "CyIRIS@Change2024!")
-    pw_hash  = generate_password_hash(password, method="pbkdf2:sha256")
+
+    # Use bcrypt — matches what IRIS uses to verify passwords
+    pw_hash = bcrypt.hashpw(
+        password.encode('utf-8'),
+        bcrypt.gensalt()
+    ).decode('utf-8')
 
     conn = psycopg2.connect(
         host     = os.environ.get("POSTGRES_SERVER",   "cyiris-db"),
