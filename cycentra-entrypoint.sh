@@ -25,17 +25,15 @@ if [ "$READY" = "1" ]; then
     python3 << 'PYEOF'
 import os, sys
 try:
-    import bcrypt
+    from flask_bcrypt import Bcrypt
     import psycopg2
 
     email    = os.environ.get("IRIS_ADMIN_EMAIL",    "administrator@cycentra.com")
     password = os.environ.get("IRIS_ADMIN_PASSWORD", "CyIRIS@Change2024!")
 
-    # Use bcrypt — matches what IRIS uses to verify passwords
-    pw_hash = bcrypt.hashpw(
-        password.encode('utf-8'),
-        bcrypt.gensalt()
-    ).decode('utf-8')
+    # Use flask_bcrypt — exactly what IRIS uses to verify passwords
+    _bcrypt = Bcrypt()
+    pw_hash = _bcrypt.generate_password_hash(password).decode('utf-8')
 
     conn = psycopg2.connect(
         host     = os.environ.get("POSTGRES_SERVER",   "cyiris-db"),
