@@ -52,7 +52,7 @@ RUN apt-get update && apt-get install -y \
     && rm -rf /var/lib/apt/lists/*
 
 # Install psycopg2 for CyCentra credential reset
-RUN pip install psycopg2-binary --quiet \
+RUN pip install psycopg2-binary --quiet 
 
 RUN mkdir -p /iriswebapp \
     /home/iris/certificates/{rootCA,web_certificates} \
