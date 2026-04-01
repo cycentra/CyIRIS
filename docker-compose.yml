@@ -37,8 +37,8 @@ services:
       POSTGRES_ADMIN_USER: iris
       POSTGRES_ADMIN_PASSWORD: "${POSTGRES_PASSWORD:-iris_pg_pass}"
       IRIS_SECRET_KEY: "${IRIS_SECRET_KEY:-change_in_production}"
-      IRIS_ADMIN_EMAIL: "${IRIS_ADMIN_EMAIL:-administrator@cycentra.com}"
-      IRIS_ADMIN_PASSWORD: "${IRIS_ADMIN_PASSWORD:-CyIRIS@Change2024!}"
+      IRIS_ADM_EMAIL: "${IRIS_ADMIN_EMAIL:-admin@cycentra.com}"
+      IRIS_ADM_PASSWORD: "${IRIS_ADM_PASSWORD}"
       OIDC_ENABLED: "false"
 
 volumes:
