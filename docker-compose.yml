@@ -1,11 +1,16 @@
-# CyCentra CyIRIS — deployment compose
-# This is the compose used for local development/testing only.
-# Production deployment is managed by cycentra360-backend app.py
-# which generates its own compose with only app + db.
+# CyCentra CyIRIS — production deployment compose
+# Managed by cycentra360-backend app.py (platform install)
+#
+# Services:
+#   cyiris-db     — PostgreSQL 15 (IRIS data + Celery result backend)
+#   cyiris-redis  — Redis 7 (Celery task broker only)
+#   cyiris        — CyIRIS web application
+#   cyiris-worker — Celery worker (background tasks: evidence, reports, bulk ops)
 
 services:
   cyiris-db:
     image: postgres:15-alpine
+    container_name: cyiris-cyiris-db-1
     restart: always
     environment:
       POSTGRES_PASSWORD: "${POSTGRES_PASSWORD:-iris_pg_pass}"
@@ -13,6 +18,7 @@ services:
       POSTGRES_DB: iris_db
     volumes:
       - cyiris_db_data:/var/lib/postgresql/data
+      - /opt/cycentra/modules/cyiris/db-init:/docker-entrypoint-initdb.d
     healthcheck:
       test: ["CMD-SHELL", "pg_isready -U iris -d iris_db"]
       interval: 5s
@@ -20,11 +26,27 @@ services:
       retries: 10
       start_period: 10s
 
-  cyiris:
-    image: ghcr.io/cycentra/cyiris-app:latest
+  cyiris-redis:
+    image: redis:7-alpine
+    container_name: cyiris-redis
     restart: always
+    # Persistence disabled — broker queue only; data loss on restart is acceptable
+    command: ["redis-server", "--save", "", "--appendonly", "no"]
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  cyiris:
+    image: ghcr.io/cycentra/cyiris:latest
+    container_name: cyiris-cyiris-1
+    restart: always
+    command: ["app"]
     depends_on:
       cyiris-db:
+        condition: service_healthy
+      cyiris-redis:
         condition: service_healthy
     ports:
       - "4433:8000"
@@ -37,9 +59,48 @@ services:
       POSTGRES_ADMIN_USER: iris
       POSTGRES_ADMIN_PASSWORD: "${POSTGRES_PASSWORD:-iris_pg_pass}"
       IRIS_SECRET_KEY: "${IRIS_SECRET_KEY:-change_in_production}"
-      IRIS_ADM_EMAIL: "${IRIS_ADMIN_EMAIL:-admin@cycentra.com}"
-      IRIS_ADM_PASSWORD: "${IRIS_ADM_PASSWORD}"
-      OIDC_ENABLED: "false"
+      IRIS_ADM_EMAIL: "${IRIS_ADM_EMAIL:-admin@cycentra.com}"
+      IRIS_ADM_PASSWORD: "CyIRIS@Change"
+      OIDC_ENABLED: "true"
+      OIDC_ISSUER: "${CYCENTRA_PORTAL_URL}/oidc"
+      OIDC_CLIENT_ID: "cyiris"
+      OIDC_CLIENT_SECRET: "${CYIRIS_OIDC_SECRET}"
+      OIDC_REDIRECT_URI: "${CYCENTRA_PORTAL_URL}/cyiris/auth/oidc/callback"
+      # Celery broker — Redis replaces default amqp/RabbitMQ
+      CELERY_BROKER: "redis://cyiris-redis:6379/0"
+    volumes:
+      - cyiris_app_data:/home/iris/iriswebapp/app/static/assets/files
+      - cyiris_user_data:/home/iris/iriswebapp/user_data
+
+  cyiris-worker:
+    image: ghcr.io/cycentra/cyiris:latest
+    container_name: cyiris-worker
+    restart: always
+    command: ["worker"]
+    depends_on:
+      cyiris-db:
+        condition: service_healthy
+      cyiris-redis:
+        condition: service_healthy
+      cyiris:
+        condition: service_started
+    environment:
+      POSTGRES_SERVER: cyiris-db
+      POSTGRES_PORT: "5432"
+      POSTGRES_USER: iris
+      POSTGRES_DB: iris_db
+      POSTGRES_PASSWORD: "${POSTGRES_PASSWORD:-iris_pg_pass}"
+      POSTGRES_ADMIN_USER: iris
+      POSTGRES_ADMIN_PASSWORD: "${POSTGRES_PASSWORD:-iris_pg_pass}"
+      IRIS_SECRET_KEY: "${IRIS_SECRET_KEY:-change_in_production}"
+      IRIS_WORKER: "yes"
+      CELERY_BROKER: "redis://cyiris-redis:6379/0"
+    volumes:
+      - cyiris_app_data:/home/iris/iriswebapp/app/static/assets/files
+      - cyiris_user_data:/home/iris/iriswebapp/user_data
 
 volumes:
   cyiris_db_data:
+  cyiris_db_init:
+  cyiris_app_data:
+  cyiris_user_data:
