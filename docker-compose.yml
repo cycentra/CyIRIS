@@ -1,8 +1,3 @@
-# CyCentra CyIRIS — deployment compose
-# This is the compose used for local development/testing only.
-# Production deployment is managed by cycentra360-backend app.py
-# which generates its own compose with only app + db.
-
 services:
   cyiris-db:
     image: postgres:15-alpine
@@ -13,6 +8,7 @@ services:
       POSTGRES_DB: iris_db
     volumes:
       - cyiris_db_data:/var/lib/postgresql/data
+      - /opt/cycentra/modules/cyiris/db-init:/docker-entrypoint-initdb.d
     healthcheck:
       test: ["CMD-SHELL", "pg_isready -U iris -d iris_db"]
       interval: 5s
@@ -21,8 +17,9 @@ services:
       start_period: 10s
 
   cyiris:
-    image: ghcr.io/cycentra/cyiris-app:latest
+    image: ghcr.io/cycentra/cyiris:latest
     restart: always
+    command: ["app"]
     depends_on:
       cyiris-db:
         condition: service_healthy
@@ -37,9 +34,19 @@ services:
       POSTGRES_ADMIN_USER: iris
       POSTGRES_ADMIN_PASSWORD: "${POSTGRES_PASSWORD:-iris_pg_pass}"
       IRIS_SECRET_KEY: "${IRIS_SECRET_KEY:-change_in_production}"
-      IRIS_ADM_EMAIL: "${IRIS_ADMIN_EMAIL:-admin@cycentra.com}"
-      IRIS_ADM_PASSWORD: "${IRIS_ADM_PASSWORD}"
-      OIDC_ENABLED: "false"
+      IRIS_ADM_EMAIL: "${IRIS_ADM_EMAIL:-admin@cycentra.com}"
+      IRIS_ADM_PASSWORD: "CyIRIS@Change"
+      OIDC_ENABLED: "true"
+      OIDC_ISSUER: "${CYCENTRA_PORTAL_URL}/oidc"
+      OIDC_CLIENT_ID: "cyiris"
+      OIDC_CLIENT_SECRET: "${CYIRIS_OIDC_SECRET}"
+      OIDC_REDIRECT_URI: "${CYCENTRA_PORTAL_URL}/cyiris/auth/oidc/callback"
+    volumes:
+      - cyiris_app_data:/home/iris/iriswebapp/app/static/assets/files
+      - cyiris_user_data:/home/iris/iriswebapp/user_data
 
 volumes:
   cyiris_db_data:
+  cyiris_db_init:
+  cyiris_app_data:
+  cyiris_user_data:
