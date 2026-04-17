@@ -23,7 +23,7 @@ import qrcode
 import random
 import string
 from flask import Blueprint, flash
-from flask import redirect
+from flask import make_response, redirect
 from flask import render_template
 from flask import request
 from flask import session
@@ -152,7 +152,18 @@ if is_authentication_oidc():
         auth_req = oidc_client.construct_AuthorizationRequest(request_args=args)
         login_url = auth_req.request(oidc_client.authorization_endpoint)
 
-        return redirect(login_url)
+        # Return a 200 HTML page so the browser commits the session cookie
+        # (containing oidc_state/oidc_nonce) before navigating to the IdP.
+        # A 302 redirect races the cookie store and causes KeyError: 'oidc_state'
+        # on the callback.
+        safe_url = login_url.replace('"', '%22').replace('<', '%3C').replace('>', '%3E')
+        html = (
+            f'<html><head>'
+            f'<meta http-equiv="refresh" content="0;url={safe_url}">'
+            f'<script>window.location.replace("{safe_url}")</script>'
+            f'</head><body>Redirecting...</body></html>'
+        )
+        return make_response(html, 200)
 
 if is_authentication_oidc():
 

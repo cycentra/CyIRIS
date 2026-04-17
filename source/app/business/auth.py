@@ -1,6 +1,6 @@
 from urllib.parse import urlparse, urljoin
 
-from flask import session, redirect, url_for, request
+from flask import session, redirect, url_for, request, make_response
 from flask_login import login_user
 
 from app import bc, app, db
@@ -130,5 +130,18 @@ def wrap_login_user(user, is_oidc=False):
     track_activity(f'user \'{user.user}\' successfully logged-in', ctx_less=True, display_in_ui=False)
 
     next_url = _filter_next_url(request.args.get('next'), user.ctx_case)
+
+    if is_oidc:
+        # Return a 200 HTML page for OIDC logins so the browser commits Set-Cookie
+        # before navigating. A 302 redirect from the OIDC callback can cause browsers
+        # to race the cookie store update, resulting in an infinite redirect loop.
+        safe_url = next_url.replace('"', '%22').replace('<', '%3C').replace('>', '%3E')
+        html = (
+            f'<html><head>'
+            f'<meta http-equiv="refresh" content="0;url={safe_url}">'
+            f'<script>window.location.replace("{safe_url}")</script>'
+            f'</head><body>Redirecting...</body></html>'
+        )
+        return make_response(html, 200)
 
     return redirect(next_url)
