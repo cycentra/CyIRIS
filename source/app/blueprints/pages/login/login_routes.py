@@ -154,14 +154,11 @@ if is_authentication_oidc():
 
         # Return a 200 HTML page so the browser commits the session cookie
         # (containing oidc_state/oidc_nonce) before navigating to the IdP.
-        # A 302 redirect races the cookie store and causes KeyError: 'oidc_state'
-        # on the callback.
-        safe_url = login_url.replace('"', '%22').replace('<', '%3C').replace('>', '%3E')
+        # Use only <body onload> — having both meta-refresh and window.location.replace
+        # in <head> can cause both to fire, hitting /oidc-authorize twice.
         html = (
-            f'<html><head>'
-            f'<meta http-equiv="refresh" content="0;url={safe_url}">'
-            f'<script>window.location.replace("{safe_url}")</script>'
-            f'</head><body>Redirecting...</body></html>'
+            f'<html><body onload="window.location.replace(\'{login_url}\')">'
+            f'Redirecting...</body></html>'
         )
         return make_response(html, 200)
 

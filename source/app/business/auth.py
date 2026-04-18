@@ -132,15 +132,13 @@ def wrap_login_user(user, is_oidc=False):
     next_url = _filter_next_url(request.args.get('next'), user.ctx_case)
 
     if is_oidc:
-        # Return a 200 HTML page for OIDC logins so the browser commits Set-Cookie
-        # before navigating. A 302 redirect from the OIDC callback can cause browsers
-        # to race the cookie store update, resulting in an infinite redirect loop.
-        safe_url = next_url.replace('"', '%22').replace('<', '%3C').replace('>', '%3E')
+        # Return a 200 HTML page so the browser commits Set-Cookie before navigating.
+        # Use only <body onload> — meta-refresh + window.location.replace both in
+        # <head> can fire twice (both mechanisms execute before navigation cancels
+        # the other), causing a double /oidc-authorize request.
         html = (
-            f'<html><head>'
-            f'<meta http-equiv="refresh" content="0;url={safe_url}">'
-            f'<script>window.location.replace("{safe_url}")</script>'
-            f'</head><body>Redirecting...</body></html>'
+            f'<html><body onload="window.location.replace(\'{next_url}\')">'
+            f'Redirecting...</body></html>'
         )
         return make_response(html, 200)
 
