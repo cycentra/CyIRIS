@@ -18,6 +18,8 @@
 
 import json
 import logging as log
+import random
+import string
 import traceback
 import uuid
 from functools import wraps
@@ -40,11 +42,12 @@ from werkzeug.utils import redirect
 from app import TEMPLATE_PATH
 
 from app import app
+from app import bc
 from app import db
 from app.blueprints.responses import response_error
 from app.datamgmt.case.case_db import get_case
 from app.datamgmt.manage.manage_access_control_db import user_has_client_access
-from app.datamgmt.manage.manage_users_db import get_user
+from app.datamgmt.manage.manage_users_db import create_user, get_user
 from app.iris_engine.access_control.utils import ac_fast_check_user_has_case_access
 from app.iris_engine.access_control.utils import ac_get_effective_permissions_of_user
 from app.iris_engine.utils.tracker import track_activity
@@ -403,7 +406,27 @@ def ac_api_requires_client_access():
 def _authenticate_with_email(user_email):
     user = get_user(user_email, id_key="email")
     if not user:
-        log.error(f'User with email {user_email} is not registered in the IRIS')
+        if not app.config.get('AUTHENTICATION_CREATE_USER_IF_NOT_EXIST'):
+            log.error(f'User with email {user_email} is not registered in the IRIS')
+            return False
+        # Auto-provision user on first SSO login (oidc_proxy lazy mode).
+        # Mirrors the create-user path in login_routes.py oidc_authorise.
+        try:
+            password = ''.join(random.choices(string.printable[:-6], k=16))
+            user = create_user(
+                user_name=user_email,
+                user_login=user_email,
+                user_email=user_email,
+                user_password=bc.generate_password_hash(password.encode('utf8')).decode('utf8'),
+                user_active=True,
+                user_is_service_account=False,
+            )
+            track_activity(f"Auto-provisioned SSO user '{user_email}' via oidc_proxy", ctx_less=True)
+        except Exception as _e:
+            log.error(f'Failed to auto-provision SSO user {user_email}: {_e}')
+            return False
+
+    if not user or not user.active:
         return False
 
     login_user(user)
