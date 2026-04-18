@@ -32,7 +32,7 @@ Iris is a web collaborative platform aiming to help incident responders sharing 
 - [License](#license)
 
 
-## Getting started
+## Getting started - April 19
 It is divided in two main parts, IrisWeb and IrisModules.   
  - IrisWeb is the web application which contains the core of
 Iris (web interface, database management, etc). 
