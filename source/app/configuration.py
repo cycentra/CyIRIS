@@ -377,9 +377,9 @@ class Config:
     AUTHENTICATION_LOCAL_FALLBACK = config.load('IRIS', 'AUTHENTICATION_LOCAL_FALLBACK', fallback="True") == "True"
 
     if authentication_type == 'oidc_proxy':
-        AUTHENTICATION_LOGOUT_URL = authentication_logout_url
+        AUTHENTICATION_LOGOUT_URL = authentication_logout_url or ""
         AUTHENTICATION_ACCOUNT_SERVICE_URL = authentication_account_service_url
-        AUTHENTICATION_PROXY_LOGOUT_URL = f"/oauth2/sign_out?rd={AUTHENTICATION_LOGOUT_URL}?redirect_uri=/dashboard"
+        AUTHENTICATION_PROXY_LOGOUT_URL = f"/oauth2/sign_out?rd=/dashboard"
         AUTHENTICATION_TOKEN_INTROSPECTION_URL = authentication_token_introspection_url
         AUTHENTICATION_JWKS_URL = authentication_jwks_url
         AUTHENTICATION_CLIENT_ID = authentication_client_id
