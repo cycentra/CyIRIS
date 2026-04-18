@@ -74,9 +74,10 @@ def logout():
     :return: Page
     """
 
-    if session['current_case']:
-        current_user.ctx_case = session['current_case']['case_id']
-        current_user.ctx_human_case = session['current_case']['case_name']
+    case_ctx = session.get('current_case')
+    if case_ctx:
+        current_user.ctx_case = case_ctx['case_id']
+        current_user.ctx_human_case = case_ctx['case_name']
         db.session.commit()
 
     if is_authentication_oidc():
@@ -97,6 +98,14 @@ def logout():
                     ctx_less=True,
                     display_in_ui=False
                 )
+
+    proxy_logout_url = app.config.get("AUTHENTICATION_PROXY_LOGOUT_URL")
+    if proxy_logout_url:
+        track_activity("user '{}' is been logged-out".format(
+            current_user.user), ctx_less=True, display_in_ui=False)
+        logout_user()
+        session.clear()
+        return redirect(proxy_logout_url)
 
     track_activity("user '{}' is been logged-out".format(current_user.user),
                    ctx_less=True, display_in_ui=False)
