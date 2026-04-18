@@ -1,5 +1,5 @@
 #  IRIS Source Code
-#  Copyright (C) 2021 - Airbus CyberSecurity (SAS)
+#  Copyright (C) 2021 - Airbus CyberSecurity (SAS) -
 #  ir@cyberactionlab.net
 #
 #  This program is free software; you can redistribute it and/or
