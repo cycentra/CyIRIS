@@ -379,7 +379,9 @@ class Config:
     if authentication_type == 'oidc_proxy':
         AUTHENTICATION_LOGOUT_URL = authentication_logout_url or ""
         AUTHENTICATION_ACCOUNT_SERVICE_URL = authentication_account_service_url
-        AUTHENTICATION_PROXY_LOGOUT_URL = "/oauth2/sign_out?rd=/dashboard"
+        _base_domain = os.environ.get("BASE_DOMAIN", "")
+        _cysoc_url = f"https://cysoc.{_base_domain}/" if _base_domain else "/"
+        AUTHENTICATION_PROXY_LOGOUT_URL = f"/oauth2/sign_out?rd={_cysoc_url}"
         AUTHENTICATION_TOKEN_INTROSPECTION_URL = authentication_token_introspection_url
         AUTHENTICATION_JWKS_URL = authentication_jwks_url
         AUTHENTICATION_CLIENT_ID = authentication_client_id
