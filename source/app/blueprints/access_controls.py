@@ -47,7 +47,8 @@ from app import db
 from app.blueprints.responses import response_error
 from app.datamgmt.case.case_db import get_case
 from app.datamgmt.manage.manage_access_control_db import user_has_client_access
-from app.datamgmt.manage.manage_users_db import create_user, get_user
+from app.datamgmt.manage.manage_users_db import create_user, get_user, add_user_to_group
+from app.datamgmt.manage.manage_groups_db import get_group_by_name
 from app.iris_engine.access_control.utils import ac_fast_check_user_has_case_access
 from app.iris_engine.access_control.utils import ac_get_effective_permissions_of_user
 from app.iris_engine.utils.tracker import track_activity
@@ -421,7 +422,11 @@ def _authenticate_with_email(user_email):
                 user_active=True,
                 user_is_service_account=False,
             )
-            track_activity(f"Auto-provisioned SSO user '{user_email}' via oidc_proxy", ctx_less=True)
+            default_group_name = app.config.get('IRIS_NEW_USERS_DEFAULT_GROUP', 'Analysts')
+            initial_group = get_group_by_name(default_group_name)
+            if initial_group:
+                add_user_to_group(user.id, initial_group.group_id)
+            track_activity(f"Auto-provisioned SSO user '{user_email}' in group '{default_group_name}' via oidc_proxy", ctx_less=True)
         except Exception as _e:
             log.error(f'Failed to auto-provision SSO user {user_email}: {_e}')
             return False
