@@ -222,34 +222,34 @@ authentication_jwks_url = None
 
 
 if authentication_type == 'oidc_proxy':
+    # In oidc_proxy mode the app authenticates purely via the X-Email header injected
+    # by nginx after oauth2-proxy validates the session cookie. No OIDC token exchange
+    # or introspection is performed — the discovery URL is optional and its failure
+    # must never crash the worker.
     oidc_discovery_url = config.load('OIDC', 'IRIS_DISCOVERY_URL', fallback="")
 
-    try:
+    if oidc_discovery_url:
+        try:
+            oidc_discovery_response = requests.get(oidc_discovery_url, verify=tls_root_ca, timeout=5)
 
-        oidc_discovery_response = requests.get(oidc_discovery_url, verify=tls_root_ca)
+            if oidc_discovery_response.status_code == 200:
+                response_json = oidc_discovery_response.json()
+                authentication_logout_url = response_json.get('end_session_endpoint')
+                authentication_account_service_url = f"{response_json.get('issuer')}/account"
+                authentication_token_introspection_url = response_json.get('introspection_endpoint')
+                authentication_jwks_url = response_json.get('jwks_uri')
+                log.info("oidc_proxy: OIDC discovery parsed (optional metadata loaded)")
+            else:
+                log.warning(f"oidc_proxy: OIDC discovery returned {oidc_discovery_response.status_code} — continuing with header-only auth")
 
-        if oidc_discovery_response.status_code == 200:
-            response_json = oidc_discovery_response.json()
-            authentication_logout_url = response_json.get('end_session_endpoint')
-            authentication_account_service_url = f"{response_json.get('issuer')}/account"
-            authentication_token_introspection_url = response_json.get('introspection_endpoint')
-            authentication_jwks_url = response_json.get('jwks_uri')
-
-        else:
-            raise IrisConfigException("Unsuccessful authN server discovery")
-
-        authentication_client_id = config.load('OIDC', 'IRIS_CLIENT_ID', fallback="")
-
-        authentication_client_secret = config.load('OIDC', 'IRIS_CLIENT_SECRET', fallback="")
-
-        authentication_app_admin_role_name = config.load('OIDC', 'IRIS_ADMIN_ROLE_NAME', fallback="")
-
-    except Exception as e:
-        log.error(f"OIDC ERROR - {e}")
-        exit(0)
-        pass
+        except Exception as e:
+            log.warning(f"oidc_proxy: OIDC discovery unavailable ({e}) — continuing with header-only auth (X-Email)")
     else:
-        log.info("OIDC configuration properly parsed")
+        log.info("oidc_proxy: no discovery URL configured — using header-only auth (X-Email)")
+
+    authentication_client_id = config.load('OIDC', 'IRIS_CLIENT_ID', fallback="")
+    authentication_client_secret = config.load('OIDC', 'IRIS_CLIENT_SECRET', fallback="")
+    authentication_app_admin_role_name = config.load('OIDC', 'IRIS_ADMIN_ROLE_NAME', fallback="")
 
 
 # --------- CELERY ---------
