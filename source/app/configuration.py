@@ -381,7 +381,7 @@ class Config:
         AUTHENTICATION_ACCOUNT_SERVICE_URL = authentication_account_service_url
         _base_domain = os.environ.get("BASE_DOMAIN", "")
         _cysoc_url = f"https://cysoc.{_base_domain}/" if _base_domain else "/"
-        AUTHENTICATION_PROXY_LOGOUT_URL = f"/oauth2/sign_out?rd={_cysoc_url}"
+        AUTHENTICATION_PROXY_LOGOUT_URL = f"https://cysoc.{_base_domain}/oauth2/sign_out?rd={_cysoc_url}" if _base_domain else "/oauth2/sign_out?rd=/"
         AUTHENTICATION_TOKEN_INTROSPECTION_URL = authentication_token_introspection_url
         AUTHENTICATION_JWKS_URL = authentication_jwks_url
         AUTHENTICATION_CLIENT_ID = authentication_client_id
