@@ -1,3 +1,28 @@
+## v2.4.29 -- 2026-04-24
+
+### Improvements
+
+  - Stability and performance improvements.
+
+---
+
+## v2.4.29 -- 2026-04-24
+
+### New Features
+
+  - **cyiris-setup.sh** — Single-file install, update, and upgrade wizard.
+    Installs Docker, deploys compose + db-init + custom-theme to `/opt/cyiris`,
+    generates `.env` with secure random secrets (postgres password, iris secret key,
+    OIDC client secret), pulls the CyIRIS image from GHCR, and starts the
+    postgres + app stack.
+    Place alongside `docker-compose.yml` on the server and run:
+    - Fresh install : `sudo bash cyiris-setup.sh`
+    - Pull latest   : `sudo bash cyiris-setup.sh --update`
+    - Pin a version : `sudo bash cyiris-setup.sh --upgrade v2.5.0`
+    Required env vars before first run: `CYCENTRA_PORTAL_URL`, `IRIS_ADM_EMAIL`.
+
+---
+
 ## v2.4.28 -- 2026-04-24
 
 ### New Features
