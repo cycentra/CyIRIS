@@ -465,6 +465,13 @@ def _oidc_proxy_authentication_process(incoming_request: Request):
         if user_email:
             return _authenticate_with_email(user_email.split(',')[0])
 
+        # No X-Email header — request is not going through the nginx/oauth2-proxy IAP gate
+        # (e.g. direct programmatic call to port 4433 from the correlation engine or the
+        # System Settings → Integrations "Test Connection" check).
+        # Flask-Login's request_loader already resolved the Bearer API key into current_user;
+        # honour that result so programmatic REST access is not locked out in oidc_proxy mode.
+        return current_user.is_authenticated
+
     elif app.config.get("AUTHENTICATION_TOKEN_VERIFY_MODE") == 'introspection':
         # Use the authentication server's token introspection endpoint in order to determine if the request is valid /
         # authenticated. The TLS_ROOT_CA is used to validate the authentication server's certificate.
