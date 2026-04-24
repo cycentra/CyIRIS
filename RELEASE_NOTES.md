@@ -1,0 +1,1128 @@
+## v2.4.28 -- 2026-04-24
+
+### New Features
+
+  - Add Redis broker + Celery worker service to CyIRIS compose
+  - add packages:write permissions to workflow
+  - CyCentra branding + credential-reset entrypoint
+  - [FIX] Add missing iris_night theme for ACE editor
+  - Missing new line
+  - Trying to use new SQLAlchemy 2.0 syntax for request case_db_exists
+  - [FIX] Deprecated tasks add return + added typing to tasks addition to prevent further error
+  - [IMP] Readd healthcheck
+  - [UPD] Updated UI with new API v2 layout
+  - [ADD] New UI nginx conf - can be enabled via NGINX_CONF_FILE
+  - Removed things that are related to the new frontend in order to get the CI working again
+  - [ADD] Docker compose dev env for new UI
+  - [IMP] Add LOG_LEVEL option and pass to entrypoint
+  - [IMP] autopep8 + add whoami endpoint (broken atm
+  - [IMP] Add watch config to docker-compose for webapp container
+  - Add config hint
+  - [IMP] Introduced method in business layer
+  - [FIX] 500 when trying to create a new asset with same name
+  - [MRG] Merge pull request #591 from lodestonesecurity/feature/oidc_auth
+  - [IMP] New URL to indicate in deprecation message changed
+  - [IMP] Added tlp field directly on the new IOCSchemaForAPIV2
+  - [#370][ADD] Add support for OIDC authentication
+  - [FIX] user with customers read right should be able to open Add customer modal
+  - [IMP] Added test Add customer modal can be opened
+  - [IMP] Introduced variable for constant in tests
+  - [ADD] Add function get_filtered_iocs(
+  - [ADD] Add test_get_iocs_should_filter_and_return_success
+  - [IMP] Add README section on how to run linting (npm script
+  - [IMP] Add Readme.md
+  - [ADD] Add function get_asset() in assets.py
+  - [ADD]Changed some code to add an asset in case_assets_routes and in test_rest
+  - [ADD] Add test_delete_asset_should_return_204 and test_delete_asset_with_missing_asset_identifier_should_return_404
+  - [ADD] New rest endpoint DELETE /api/v2/assets/<int:cur_id>
+  - [ADD] New rest endpoint GET /api/v2/assets/<int:cur_id>
+  - [ADD] New rest endpoint POST /api/v2/cases/<int:caseid>/assets
+  - [IMP] Moved cases socketIO event handlers to new namespace app.blueprints.socket_io_event_handlers
+  - [IMP] Moved case notes socketIO event handlers to new namespace app.blueprints.socket_io_event_handlers
+  - [IMP] Moving activities and alerts template endpoints to new app.blueprints.pages namespace
+  - [MRG] Merge pull request #486 from Matthijsy/feature/link-ioc-direct-to-case
+  - [FIX] Alerts addition with new IOC changes
+  - [FIX] Issues with alerts creation with new IOC case ID association
+  - Merge remote-tracking branch 'upstream/develop' into feature/link-ioc-direct-to-case
+  - [IMP] Removing all cases between each tests. Added new test to check /api/v2/cases/{identifier} contains field case_name
+  - [IMP] add staticmethod for convert_response_to_string
+  - [IMP] add staticmethod for get_first_case
+  - [FIX] Add self in _convert_response_to_string
+  - [IMP] Add @staticmethod
+  - [FIX] Notification with new api was expecting an object
+  - [IMP] Add arguments in api_error() and sendBefore(
+  - [FIX] Writed correctly api_error() new function
+  - [ADD] Add get() with query_parameters
+  - [ADD] New rest endpoint DELETE /api/v2/tasks/task_id
+  - [ADD] New rest endpoint DELETE /api/v2/tasks/task_id
+  - [ADD] New rest endpoint GET /api/v2/tasks/task_id
+  - [ADD] New rest endpoint POST /api/v2/cases/<int:caseid>/tasks
+  - [IMP] Introduced api_request_failed to avoid second parameter of notify_auto_api
+  - [ADD] New rest endpoint POST /api/v2/cases/{identifier}/iocs
+  - [IMP] Replaced deprecated /case/ioc/add in web interface
+  - [ADD] New rest endpoint DELETE /api/v2/cases/{identifier}/iocs/{identifier}
+  - [ADD] New rest endpoint GET /api/v2/cases/{identifier}/iocs/{identifier}
+  - [ADD] New rest endpoint POST /api/v2/cases/{identifier}/iocs
+  - [IMP] Replaced deprecated /manage/cases/add into /api/v2/cases in web interface
+  - [ADD] Renamed endpoint_deprecated into endpoint_removed and added a new endpoint_deprecated which does not return 410
+  - [ADD] New rest endpoint POST /api/v2/cases
+  - [ADD] Add markdown about new API REST documentation
+  - [ADD] New coding rule to have only one import per line
+  - add-feature: add resources limits
+
+### Bug Fixes
+
+  - remove stray backslash from pip install line in Dockerfile
+  - use flask_bcrypt matching IRIS password verification
+  - use bcrypt hashing to match IRIS password verification
+  - correct Python indentation in credential reset script
+  - lowercase table name 'user' for source-built image
+  - build from source with logos baked in, fixed ping URL, unified Dockerfile
+  - use docker-custom/Dockerfile.custom and correct image name ghcr.io/cycentra/cyiris
+  - [FIX] Postinit escape
+  - [FIX] regex in postinit
+  - [FIX] Self in validation marshmallow
+  - [FIX] Deepsource PTC-W0010
+  - [FIX] timeline escape
+  - [FIX] timeline.js codeql
+  - [FIX] Url redi in auth
+  - [FIX] Fixed case timeline js
+  - [FIX] CodeQL for timeline.js
+  - [FIX] Double quotes in CSV export
+  - [FIX] CodeQL replacement of s ausbstring with itself
+  - [FIX] CodeQL #169
+  - [FIX] Fixed codeql #134
+  - [FIX] Ported changes for openredir
+  - [FIX] Version in Prod compose to avoid beta
+  - [FIX] Missing parenthesis in refactored condition in #b950027d
+  - [FIX] Bumped API versions
+  - [FIX] Template report fetching issue
+  - [FIX] Ported changes from v2.4.19, v2.4.20
+  - [FIX] Ruff F811
+  - [FIX] Issue with updated bs and custom attributes
+  - [FIX] Migration case/ioc
+  - [#722][IMP]Fix date parsing bug in case timeline (time badge
+  - [FIX] Migration of IOCs
+  - Fixed unused imports
+  - [FIX] Merge of alerts
+  - [IFIX] Dedup of IOCs in case
+  - [FIX] Dedup of ioc and assets when merging into existing case
+  - [FIX] TLP in IOC when tlp not set
+  - [FIX] Worker not booting
+  - [FIX] Assets route
+  - [FIX] typing in case tasks route
+  - [FIX] Deletion and update tasks no showing UI feedback
+  - [FIX] Deprecated task update route not return right formatted data
+  - [FIX] IOC deletion in deprecated route. Added typing to prevent future error
+  - [FIX] Message to user when updating IOC
+  - [UPD] Updated identifiers in manage cases routes - fixed issue on old routes
+  - Fixed one occurence of Ruff F541. Activate F541
+  - Fixed one occurence of Ruff F541
+  - Fixed one occurence of Ruff F541
+  - [FIX] Inverted output in assets create + error progapation from business to api
+  - [FIX] Error propagation with anonymous user without id
+  - Was incorrect cache-dependency-path
+  - Get paginated tasks returns uuid correctly
+  - [FIX] Test of user comments permissions
+  - [FIX] Update of user case access from management
+  - [FIX] Issue deleting case access
+  - [FIX] DS file
+  - [FIX] Datastore upload
+  - [FIX] Permissions of comment update
+  - [FIX] AMSFI suggest tag parsing
+  - [FIX] Possible broken directory name in DS
+  - [FIX] Casing in dockerfile
+  - [FIX] UI logout was not working anymore
+  - [FIX] Added back build of svelte app - previsouly removed for some reasons
+  - [FIX] Wrong commented message
+  - [FIX] Mssing user feedback for case update error
+  - [FIX] Regression on GET /user/tasks/list (returned 500 and was missing task_case field) for the UI to work
+  - [FIX] Circular import
+  - [FIX] GET /api/v2/cases/{case_identifier}/tasks/{task_identifier} should return 200 (rather than 201
+  - [FIX] PUT /api/v2/cases/{case_identifier}/tasks/ (with a slash) should return 404
+  - [FIX] some incorrect imports
+  - Made direct imports to try to fix F401 ruff check
+  - [FIX] API cases v2 IOCs
+  - [FIX] IOC test issue due to UI upgrade
+  - [FIX] IOC updates
+  - [FIX] Broken wtf form due to upgrade
+  - [FIX] Issue with alert route
+  - [FIX] Added back assets filter
+  - [FIX] Assets filter
+  - [FIX] Missing routes for dashboard
+  - [FIX] IOC check cid ac for graphql
+  - [FIX] Perms in resolve case
+  - [FIX] Permissions issues in graphql
+  - [FIX] API v2 routes
+  - [FIX] Migrated tests to API v2 layout
+  - [FIX] remaining of merge
+  - [FIX] Made tests on assets endpoint work
+  - [FIX] Made tests on iocs endpoint work
+  - [FIX] Use API v2 endpoints instead of alerts/filter. Should not forget to put back the alerts/filter endpoint
+  - [FIX] removed verb filter from API v2 endpoint to get alerts. Updated test
+  - [FIX] Api v2 endpoint to get task was not working anymore
+  - [FIX] Api v2 endpoint to delete task was not working anymore
+  - [FIX] path to API v2 tasks routes was incorrect
+  - [FIX] API V2 cases endpoints were disconnected. Tests failed
+  - Installed autoprefixer and tailwindcss so that UI build works???
+  - [FIX] CSP for frontend and blueprint naming convention
+  - [FIX] Init routes & commons JS error
+  - [FIX] Fixed migration of IOC and cors
+  - [FIX] Issue after merging
+  - [FIX] Logout of users in local auth
+  - [FIX] Logout of users in local auth
+  - [FIX] User logout in local host
+  - [FIX] Logout of users in local auth
+  - [IMP] python3.12 support, disabling sqlalchemy-imageload, misc bug fixes
+  - [MRG] Merge branch 'hotfix_2.4.19' into sveltekit_support
+  - [IMP] Fix broken `api/v2/auth/whoami` endpoint
+  - Fixed ruff check TID252 (ruff check --select TID252, with option ban-relative-imports set to all
+  - Syntactical changes automatically made by command: ruff check --fix
+  - [FIX] Wrong identifier
+  - [FIX] Deleted ioc which had associated comments does not prevent deletion of case
+  - [FIX] Delete associated comments when deleting an asset
+  - [FIX] Unlink comments when deleting an asset
+  - [FIX] Delete asset when it is linked to an ioc should not fail
+  - [FIX] Get asset should not return asset after it has been deleted
+  - [FIX] Path of moved imports
+  - [MRG] Merge pull request #603 from dfir-iris/api_v2_regression_fixes
+  - [IMP] Finished dispatching tests, remaining ones now in tests_rest_miscellaneous
+  - [FIX] Was using the wrong object identifier to check permissions
+  - [FIX] list of IOCs should be paginated
+  - [IMP] Added a fixture to be able to perform calls to REST API in e2e tests
+  - [FIX] Alerts DB fix
+  - [FIX] Lock file
+  - [FIX] Show error when trying to create an asset with the same value and type
+  - [FIX] ioc creation should not allow the creation of two iocs with the same value and type in the same case
+  - [FIX] Put back **kwargs as they seem necessary?
+  - [FIX] create customer should be authorized for a user with right customer_write
+  - [FIX] Regression
+  - [FIX] delete task should return 403 when user has insufficient permissions
+  - [FIX] get asset should return 403 when user has insufficient permissions
+  - [FIX] Test was incorrectly written
+  - [FIX] delete asset was returning 500 instead of 403 when user has insufficient permissions
+  - [FIX] GET /api/v2/assets/{identifier} was not working
+  - [FIX] get asset were checking the case permission of the wrong case
+  - [FIX] create and delete asset were checking the case permission of the wrong case
+  - [FIX] delete ioc returns 403 when user has not sufficient rights
+  - [FIX] get iocs returns 403 when user has not sufficient rights
+  - [FIX] get ioc returns 200 on success (rather than 201
+  - [FIX] get ioc returns 404 when not present
+  - [FIX] permission check was incorrect for ioc retrieval
+  - [FIX] permission check was incorrect for ioc creation
+  - [FIX] Access bug for /api/v2/cases/{identifier}
+  - [FIX] Url to request from interface
+  - [FIX] POST /api/v2/cases/{identifier}/iocs were not created in the correct case
+  - [IMP] Fix problem on get_request_data_api('/api/v2/iocs'
+  - [FIX] Fix problem on unused parameter
+  - [FIX] Declare JQuery as globals in Eslint
+  - [FIX] Case page script tag with context="module"
+  - [FIX] Dashboard page script tag with type="module"
+  - [FIX] Filename of SortableJS when copying dependency from node_modules
+  - [FIX] Start docker compose after python tests
+  - [FIX] Building the ui/static assets before running tests
+  - [FIX] end to end tests in CI, need that the ui is built before the docker is run
+  - [FIX] Redefinition of function in JS
+  - [MRG] Merge pull request #569 from dfir-iris/fix_missing_form_feedbacks
+  - [FIX] POST /api/v2/cases returns a data field in case of error to show the incorrect fields in the UI
+  - [IMP] Removed pin down of cheerio, since spectaQL bug (anvilco/spectaql#979) was fixed
+  - [FIX] Deprecated endpoint missing caseid
+  - [FIX] Old import
+  - [MRG] Merge pull request #560 from dfir-iris/fixing_post_user_update
+  - [FIX] Pinning down cheerio to 1.0.0-rc.12 when generating graphql documentation with spectaql
+  - [FIX] Because of https://github.com/anvilco/spectaql/issues/979, had to explicit cheerio version to install when running spectaql
+  - [FIX] POST /user/update: removed caseid parameter, added a non-regression test
+  - [FIX] Fix problem on renamed tasks actions
+  - [FIX] Fix problem on case_assets_routes.py
+  - [FIX] CodeQL Multiple imports for an import name detected
+  - [IMP] Prefixed private method with underscore _
+  - [FIX] Set current year in license header
+  - [FIX] Incorrect imports
+  - [FIX] case identifier is not required for these endpoints
+  - [FIX] Using ac_case_requires instead of ac_api_requires for model /case/ioc/add/modal
+  - [FIX] Using ac_case_requires instead of ac_api_requires for model /case/assets/add/modal
+  - [FIX] Migration of IOC
+  - [FIX] Migration of IOCs
+  - Fix merge with develop issues
+  - [IMP] Fix problem on test graphql_ioc_first_filter
+  - [IMP] Fix problem on test opendateFilter
+  - [FIX] Upload path
+  - [FIX] CodeQL uncontrolled data used in path expression 2
+  - [FIX] CodeQL URL redirection from remote source on case templates upload
+  - [FIX] CodeQL report on uncontrolled data used in path expression
+  - [FIX] Bug when treating return value of request in Alerts page
+  - [FIX] Remove staticmethod
+  - [FIX] Fixed bug when we delete ioc(IHM
+  - [FIX] Fixed bug when we delete case (IHM
+  - [FIX] Missing left closing parenthesis
+  - [FIX] assets and iocs filters in alert are string names, not int identifiers
+  - [FIX] Made test work
+  - [FIX] Fix problem on POST /api/v2/tasks/{task_id} response_error
+  - [FIX] Fix response_failed on POST /api/v2/cases/case_id/tasks
+  - [FIX] Fix problem on test_get_tasks_should_return_201
+  - [FIX] Fix problem on test_get_ioc_should_return_ioc_type_id
+  - [FIX] should notify error, only when there is an error
+  - [FIX] Fix problem on test_delete_ioc_with_missing_ioc_identifier_should_return_404
+  - [FIX] case timeline REST routes were not registered
+  - [FIX] Fix problem on test_delete_ioc_should_return_201
+  - [FIX] Incorrect import, added test
+  - [FIX] administrator should be able to create case-templates
+  - [FIX] Incorrect import
+  - [FIX] REST aspect of /case/ioc blueprint was not correctly registered
+  - [FIX] REST aspect of /case/graph blueprint was not correctly registered
+  - [FIX] REST aspect of /case/assets blueprint was not correctly registered
+  - [FIX] Some deepsources analysis issues
+  - [FIX] We can't change the parameter names of graphql queries
+  - [IMP] Prefixed method by iocs_
+  - [IMP] Prefixed method by cases
+  - [IMP] Prefixed method by cases
+  - [IMP] Added namespace prefix in cases
+  - [IMP] Added namespace prefix in iocs
+  - [IMP] Added namespace prefix in notes
+  - [IMP] Added rule for prefixing function names in codestyle. Started renaming
+  - -C to -c
+
+### Improvements
+
+  - Automated commit for v1.0.17 at 2026-04-24T07:46:24Z
+  - Automated commit for v1.0.16 at 2026-04-19T12:48:09Z
+  - Automated commit for v1.0.15 at 2026-04-19T09:42:08Z
+  - Automated commit for v1.0.14 at 2026-04-19T00:12:08Z
+  - Automated commit for v1.0.13 at 2026-04-19T00:00:20Z
+  - Automated commit for v1.0.12 at 2026-04-18T23:40:50Z
+  - Automated commit for v1.0.11 at 2026-04-18T23:14:20Z
+  - Automated commit for v1.0.10 at 2026-04-18T22:42:15Z
+  - Automated commit for v1.0.9 at 2026-04-18T22:24:58Z
+  - Automated commit for v1.0.8 at 2026-04-18T22:23:22Z
+  - Automated commit for v1.0.7 at 2026-04-18T22:09:52Z
+  - Automated commit for v1.0.6 at 2026-04-18T16:00:58Z
+  - Automated commit for v1.0.5 at 2026-04-18T00:15:26Z
+  - Automated commit for v1.0.4 at 2026-04-17T22:57:14Z
+  - Automated commit for v1.0.3 at 2026-04-13T19:38:56Z
+  - Automated commit for v1.0.2 at 2026-04-03T13:23:31Z
+  - Revert docker-compose.yml — Redis/worker deferred until needed
+  - Automated commit for v1.0.1 at 2026-04-01T21:48:49Z
+  - simplify: remove credential reset, use IRIS default administrator login
+  - [DEL] Removed unused import. Ruff
+  - [IMP] Removed unused parts from timeline
+  - Bump version: 2.4.18 → 2.5.0-beta.1
+  - [IMP] Improved script helper
+  - [ADD] iris helper
+  - [ADD] Added back commit to ioc migration
+  - [IMP] Improved migration of IOCs, speeded up
+  - [MRG] Merge pull request #724 from slw07g/develop
+  - [DEL] Removed nested alerts in assets within schema
+  - [CLEAN] Removed spurious logs
+  - Deprecated GET /case/assets/list in favor of GET /api/v2/cases/{case_identifier}/assets
+  - Added test to update an asset with an asset_compromise_status_id
+  - Added test to create asset with an asset_compromise_status_id
+  - GET /api/v2/cases/{case_identifier}/assets accepts request parameter order_by
+  - Factored use of convert_sort_direction method
+  - GET /api/v2/cases/{case_identifier}/assets accepts request parameter per_page
+  - Get paginated assets should return current page
+  - Alignment
+  - Get assets returns 404 when case does not exist
+  - Renamed variable
+  - Removed parameter name
+  - Missing newline
+  - Added first implementation of /api/v2/cases/{case_identifier}/assets
+  - [UPD] Migrated alert filter to alerts v2
+  - [DEL] Deleted unused JS code in IOC
+  - Ruff: reactivated rule F403
+  - Added test to update asset analysis_status_id
+  - Deprecated POST /case/assets/update/{identifier} in favor of /api/v2/cases/{case_identifier}/assets/{identifier}
+  - Return 404 when asset is not found
+  - Use the same schema as other assets endpoints for asset update
+  - Renamed case_id into case_identifier
+  - Started implementation of PUT /api/v2/cases/{case_identifier}/assets/{identifier}
+  - Deprecated GET /case/tasks/list in favour of GET /api/v2/cases/<int:case_identifier>/tasks
+  - [CLEAN] Factored paginated returns
+  - Build UI before e2e tests again. Seems not to be working otherwise
+  - Moved build of user interface in its own job
+  - Simplified CI somewhat
+  - Removed unnecessary steps in CI
+  - Create .env file again :(
+  - Moved out graphQL generation
+  - Removed unnecessary step in CI
+  - Moved out execution of API test in its own job
+  - Added build of app
+  - Added build of nginx
+  - Added tag iriswebapp_db/develop when building docker in CI
+  - Building docker in a job before during CI
+  - Added current_page when filtering tasks
+  - [CLEAN] Factored code to convert the sort direction
+  - [CLEAN] Added method tasks_filter at the business level
+  - [CLEAN] Pushed down the use of PaginationParameters when filtering for cases
+  - [CLEAN] Use parse_pagination_parameters once more
+  - [CLEAN] Pushed PaginationParameter down into db layer when filtering IOCs
+  - [CLEAN] Reuse parse_pagination_parameters
+  - [CLEAN] Reuse parse_pagination_parameters
+  - [ADD] parameters page, per_page, order_by and sort_dir to endpoint GET /api/v2/cases/{case_identifier}/tasks
+  - Added field total when getting paginated tasks
+  - Single quotes
+  - GET /api/v2/cases/{case_identifier}/tasks return [] data field when there are no tasks
+  - Added first implementation of GET /api/v2/cases/{case_identifier}/tasks
+  - [CLEAN] Removed unnecessary variable name
+  - [UPD] Updated dependencies
+  - [ADD] Added test for invalid integer on case severity
+  - [IMP] Make frontend use existing env key configs to make config a bit easier
+  - [MRG] Merge pull request #698 from dfir-iris/api_v2_update_task
+  - [CLEAN] Import function register_blueprints rather than views to pass ruff F401 check. Initialization code is more readable
+  - Activate F401 rule during ruff checks
+  - [CLEAN] Moved Ruff checks in its own CI
+  - [CLEAN] Removed unused imports (Ruff F401
+  - [CLEAN] Removed unused imports (Ruff F401
+  - [CLEAN] Removed unused imports (Ruff F401
+  - [CLEAN] Removed unused imports (Ruff F401
+  - [CLEAN] Removed unused imports (Ruff F401
+  - [CLEAN] Removed unused import (Ruff F401
+  - [CLEAN] Removed unused import (Ruff F401
+  - [CLEAN] Removed unnecessary imports in __init__
+  - [CLEAN] Prefer direct imports
+  - [CLEAN] Prefer direct imports
+  - [CLEAN] Prefer direct imports
+  - [CLEAN] Prefer direct imports
+  - [CLEAN] Prefer direct imports
+  - [CLEAN] Prefer direct imports
+  - [CLEAN] Prefer direct imports
+  - [CLEAN] Prefer direct imports
+  - [CLEAN] Prefer direct imports
+  - [CLEAN] Prefer direct imports
+  - [CLEAN] Prefer direct imports
+  - [CLEAN] Prefer direct imports
+  - [CLEAN] Prefer direct imports
+  - [CLEAN] Prefer direct imports
+  - [CLEAN] Prefer direct imports
+  - [CLEAN] Prefer direct imports
+  - [CLEAN] Prefer direct imports
+  - [CLEAN] Prefer direct imports
+  - [CLEAN] Prefer direct imports
+  - [CLEAN] Prefer direct imports
+  - [CLEAN] Prefer direct imports
+  - [CLEAN] Prefer direct imports
+  - [CLEAN] Prefer direct imports
+  - [CLEAN] Prefer direct imports
+  - [CLEAN] Prefer direct imports
+  - [CLEAN] Prefer direct imports
+  - [CLEAN] Prefer direct imports
+  - [CLEAN] Prefer direct import
+  - [CLEAN] Prefer direct import
+  - [CLEAN] Removed unnecessary import
+  - [CLEAN] Using direct import
+  - [CLEAN] Some imports cleanup
+  - [CLEAN] Some imports cleanup
+  - [CLEAN] Some imports cleanup
+  - [CLEAN] Some imports cleanup
+  - [CLEAN] Removed unused import
+  - [CLEAN] Removed method get_task_with_assignees, use simpler method get_task_assignees
+  - [CLEAN] Using string interpolation rather than concatenation
+  - [CLEAN] Removed one occurence of get_task_with_assignees
+  - [CLEAN] avoid abbreviations: case_id => case_identifier
+  - Deprecated endpoint POST /case/tasks/update/<int:cur_id> in favor of PUT /api/v2/cases/<int:case_identifier>/tasks/<int:identifier>
+  - PUT /api/v2/cases/{case_identifier}/tasks/{identifier} returns a task
+  - [CLEAN] early break
+  - [CLEAN] update task should return 400 when field task_status_id is missing
+  - [CLEAN] tasks_update expect argument task to be not None
+  - [CLEAN] tasks_update expect CaseTasks object instead of identifier
+  - [CLEAN] Removed unnecessary use of method get_task_with_assignees
+  - [CLEAN] Get identifier directly from the task
+  - [CLEAN] Removed unnecessary parameter case_identifier
+  - Emptied list of assignees in tasks tests
+  - Started implementation of PUT /api/v2/cases/{case_identifier}/tasks/{identifier}
+  - Simple quotes
+  - Removed unnecessary parameter fields
+  - Changed return field 'alerts' to 'data' for endpoint GET /api/v2/alerts in order to adhere to the API v2 rules
+  - Added test for GET /api/v2/alerts
+  - Put back GET /api/v2/alerts for test to work
+  - [CLEAN] commented the routes which are not with /api/v2 design principles yet
+  - [MRG] Merge pull request #690 from dfir-iris/issue_678_api_v2_cases_put
+  - Moved update case before delete case
+  - Removed unused import
+  - Added test to update case tags
+  - Added test to update case reviewer_id
+  - Removed unnecessary tuple in return
+  - Added test to update case_customer identifier
+  - Trying to avoid abbreviations: case_id => case_identifier
+  - [CLEAN] Removed done TODO
+  - Changed TODO
+  - [#678] Added test to update case status
+  - [#678] Added test to update case state
+  - [#678] Added test to update case owner
+  - [#678] Added test to update case classification_id
+  - [#678] Added test to update case severity_id
+  - Set URLs to be strict
+  - [#678] Deprecated endpoint /manage/cases/update/{identifier}
+  - [#678][add] started PUT on /api/v2/cases/{identifier}
+  - [CLEAN] Renamed variable to avoid abbreviations
+  - [MRG] Merge pull request #685 from dfir-iris/ruff
+  - Added pyproject.toml to configure rules Ruff should ignore when running
+  - Added ruff static analysis execution in CI
+  - [ADD] Endpoint deprecation for user cases list
+  - [ADD] Test for rest iocs permissions to parallel with graphql
+  - [ADD] Missing env
+  - [ADD] Case custom in marshable
+  - [ADD] NODE_ENV = dev to disable CSRF on frontend
+  - [IMP] Update frontend to use node22
+  - [ADD] Sveltkit env for dev
+  - [MRG] Merge branch 'amber-vale-origin/sveltekit_support' into sveltekit_support
+  - [ADD] Context v2 routes
+  - [UPD] Updated to Python 3.12
+  - [ADD] Context v2 routes
+  - [IMP] Refactor v2 case blueprints structure, rename routes a bit
+  - [IMP] Simplify cases rest v2 file names
+  - [IMP] pluralize "case" folder, to match rest of v2 folders
+  - [IMP] Refactor v2 dashboard route BP structure
+  - [ADD] Alerts v2 api to root v2 api BP
+  - [MRG] Merge branch 'master' of https://github.com/dfir-iris/iris-web into origin/sveltekit_support
+  - [IMP] Refactor alerts routing
+  - [DEL] Remove left over user var in auth whoami
+  - [MRG] Merge branch 'sveltekit_support' of https://github.com/dfir-iris/iris-web into origin/sveltekit_support
+  - [IMP] Cleanup auth endpoints
+  - [MRG] Merge pull request #667 from FideliusFalcon/develop
+  - [#665][ADD] IRIS_SESSION_TIMEOUT is being interpreted as a string
+  - [IMP] Make flask-cors mandatory
+  - [ADD] Sveltekit whoami support
+  - [647][IMP] alert_owner_id autofill
+  - [DEL] Dev compose app watch settings
+  - [MRG] Merge branch 'develop' of https://github.com/dfir-iris/iris-web into origin/sveltekit_support
+  - [ADD] v2 alerts missing file
+  - [IMP] Switched alerts to v2
+  - [DEL] Removed old route
+  - [UPD] Moved user reviews list to v2
+  - [UPD] Moved users attributed tasks to v2
+  - [ADD] API v2 for dashb routes
+  - [MRG] Merge branch 'develop' into svelte_test
+  - [MRG] Merge branch 'master' into develop
+  - [ADD] Shadcn
+  - [ADD] Route for svelte app
+  - [UPD] Updated after merge
+  - [MRG] Merge branch 'master' into develop
+  - [MRG] Merge pull request #622 from dfir-iris/api_v2_tweaks
+  - [IMP] Better test name
+  - [IMP] Avoid unnecessarily retrieving the object from the database multiple times
+  - [IMP] Made code more regular
+  - [IMP] Removed now redundant code
+  - [IMP] Avoid naming positional parameter
+  - [IMP] Added test for the increment of asset state when deleting asset
+  - [IMP] Replaced in ui POST /case/ioc/update/{identifier} by PUT /api/v2/iocs/{identifier}
+  - [IMP] Spaces
+  - [IMP] Removed parameter which was always set to true
+  - [IMP] Spaces
+  - [IMP] Went a little bit backward
+  - [IMP] Identation
+  - [IMP] Removed spurious space
+  - [IMP] Simple quotes
+  - [IMP] Added more methods in requests lib
+  - [IMP] Simple quotes
+  - [IMP] Added a first end to end test for alerts
+  - [IMP] Newly created alert should be visible by administrator
+  - [IMP] Starting to extract post_request_api in its own library
+  - [IMP] One import per line
+  - [IMP] Removed unused import
+  - [IMP] Added test of error case of PUT /api/v2/iocs/{identifier}
+  - [IMP] Avoid retrieving twice the ioc from database by changing the business layer update method signature
+  - [IMP] Changed success response format of endpoint PUT /api/v2/iocs/{identifier} to respect API v2 rules
+  - [IMP] Changed verb of update ioc endpoint (POST /api/v2/iocs/{identifier}) into PUT
+  - [IMP] Added TODO
+  - [IMP] Removed unused imports
+  - [IMP] Removed seemingly dead method
+  - [IMP] Removed unused imports
+  - [IMP] Moved case /api/v2 endpoints into app.blueprints.rest.v2
+  - [IMP] Removed unused variable
+  - [MRG] Merge pull request #618 from sandervandegeijn/615_add_customer_id
+  - [MRG] Merge pull request #614 from dfir-iris/api_v2_get_cases
+  - Added customer ID to table
+  - [IMP] Moved endpoints in namespace app.blueprints.rest.v2
+  - [IMP] Explicit method
+  - [IMP] Using full url
+  - [IMP] Alignment
+  - [IMP] Explicit GET method
+  - [IMP] Removed method which was duplicated
+  - [IMP] Simple quotes
+  - [IMP] Removed seemingly unused method
+  - [IMP] Removed seemingly unused methods
+  - [IMP] Made method private
+  - [IMP] Removed seemingly unused methods
+  - [IMP] Moved class AlchemyEncoder into blueprints namespace
+  - [IMP] Removed seemingly unused class
+  - [IMP] Removed seemingly unused methods
+  - [IMP] Moved method not_authenticated_redirection_url into namespace blueprints
+  - [IMP] Moved method is_authentication_ldap into namespace blueprints
+  - [IMP] Moved method is_authentication_oidc into namespace blueprints
+  - [IMP] Removed seemingly dead code
+  - [IMP] Moved response into namespace blueprints
+  - [IMP] Moved response_success out of util.py into blueprints namespace
+  - [IMP] Moved response_error out of util.py into blueprints namespace
+  - [IMP] Moved endpoint_removed out of util.py into blueprints namespace
+  - [IMP] Moved page_not_found out of util.py into blueprints namespace
+  - [IMP] Moved log_exception_and_error out of util.py into blueprints namespace
+  - [IMP] Made update_current_case private
+  - [IMP] Moved update_current_case out of util.py into blueprints namespace
+  - [IMP] Moved code out of util.py into blueprints namespace
+  - [IMP] Removed seemingly dead method is_authentication_local
+  - [IMP] Moved is_user_authenticated into namespace blueprints
+  - [IMP] Moved ac_api_requires_client_access into namespace blueprints
+  - [IMP] Moved ac_api_return_access_denied into namespace blueprints
+  - [IMP] Return 404 when deleting inexistant asset of creating an asset on an inexistant case
+  - [IMP] Renamed method to follow coding conventions
+  - [IMP] Missing line break
+  - [IMP] Return 404 when trying to delete inexistant task
+  - [IMP] Simple quotes instead of double quotes
+  - [IMP] Return 404 when trying to delete inexistant IOC
+  - [IMP] Removed spurious line
+  - [IMP] Remove users after each test
+  - [IMP] Remove customers only in tests_rest_customers
+  - [IMP] Change user customer to initial so that the customer can be removed
+  - [IMP] Uniform syntax FROM and AS
+  - [IMP] For endpoint GET /api/v2/cases/{identifier}/iocs, changed field iocs into data
+  - [IMP] For endpoint GET /api/v2/cases, changed field cases into data
+  - [MRG] Merge pull request #611 from dfir-iris/apiv2_new_dir
+  - [ADD] IOC update for API v2
+  - [UPD] Updated IOC routes base
+  - [ADD] v2 directory and moved files
+  - [DEL] Deleted old login page
+  - [DEL] Removed unused popover
+  - [IMP] Inlined method
+  - [IMP] Inlined method
+  - [IMP] Made method private
+  - [IMP] Removed unused method
+  - [IMP] Removed unused method
+  - [IMP] Inlined method get_cases
+  - [IMP] More simplification of test suites
+  - [IMP] Trying not to install playwright browser dependencies and see if it still works
+  - [IMP] Added tests_rest_users
+  - [IMP] Improved readability of test
+  - [IMP] Install only chromium and firefox for e2e tests
+  - [IMP] Improved test readability somewhat
+  - [IMP] Added tests_rest_cases
+  - [IMP] Added tests_rest_alerts
+  - [IMP] Added tests_rest_permissions
+  - [IMP] Created tests_rest_tasks.py
+  - [IMP] Started splitting backend tests according to topics
+  - [IMP] No need for a classmethod in tests anymore
+  - [IMP] No need to wait for DFIR-IRIS api to have started: this is done with the healthcheck
+  - [IMP] Do not start and stop DFIR-IRIS during backend tests
+  - [IMP] Added healthcheck on web_app in dev docker compose (maybe we could set it in base?
+  - [IMP] Simplified tests: no need to generate distinct IOC names now that they are isolated by cases
+  - [IMP] Use create_case in graphql tests
+  - [IMP] Generate dummy users using uuid
+  - [IMP] Removed some dead methods
+  - [IMP] Added TODO and some cleanups
+  - [IMP] Removed one call to is_unique_for_cid
+  - [IMP] Moved check of asset duplication down into business layer
+  - [IMP] Uniformed deprecated endpoint message
+  - [IMP] Added test to prevent the creation of an asset with same name and type
+  - [ADD] Wheel for evtx2splunk
+  - [UPD] Updated evtx2splunk
+  - [MRG] Merge branch 'master' into develop
+  - [ADD] Lock file
+  - [MRG] Merge pull request #600 from dfir-iris/refuse_duplicate_iocs_creation
+  - [IMP] Added TODO
+  - [IMP] Removed test suite with starts and stops DFIR-IRIS between each state. Added more database cleanup between each tests. The goal is to start DFIR-IRIS once before all the tests. This will allow to organize the tests in more suites
+  - [IMP] Removed unnecessary import
+  - [IMP] Factored code to create an IOC through the API
+  - [IMP] Indentation
+  - [IMP] Filter before the loop
+  - [IMP] Spacing
+  - [IMP] Removed spurious white space
+  - [IMP] Syntax
+  - [IMP] Identation
+  - [IMP] Remove all created cases after each test
+  - [IMP] Made tests work on different cases so that they do not interfere with the following tests
+  - [IMP] Removed linked iocs filter on graphql request
+  - [IMP] Removed unnecessary variable
+  - [IMP] Using simple quotes
+  - [IMP] Removed seemingly unnecessary return value
+  - [IMP] Removed unnecessary check
+  - [IMP] Removed unnecessary parameter
+  - [IMP] Removed seemingly unnecessary code
+  - [MRG] Merge pull request #597 from dfir-iris/rest_finalization
+  - [IMP] Using template literal for urls
+  - [IMP] Using template literal for urls
+  - [IMP] Using template literal for urls
+  - [IMP] Using absolute path for url
+  - [IMP] Using absolute path for url
+  - [IMP] Using template literal for urls
+  - [IMP] Using absolute path for url
+  - [IMP] Using template literal for url
+  - [IMP] Removed unnecessary variables
+  - [IMP] Using template literal for urls
+  - [IMP] Using template literal for urls
+  - [IMP] Using template literal
+  - [IMP] Using template literal
+  - [IMP] Using template literal
+  - [IMP] Using absolute path for url
+  - [IMP] Using template literal
+  - [IMP] Using template literal
+  - [IMP] Using absolute path for url
+  - [IMP] Using absolute path for url
+  - [IMP] Using absolute path for url
+  - [IMP] Using template literal
+  - [IMP] Using template literal
+  - [IMP] Inlined method
+  - [IMP] Using absolute path for url
+  - [IMP] Using absolute path for url
+  - [IMP] Using absolute path for url
+  - [IMP] Using absolute path for url
+  - [IMP] Using absolute path for url
+  - [IMP] Using absolute path for url
+  - [IMP] Syntax
+  - [IMP] Using template literal for url
+  - [IMP] Simple quotes
+  - [IMP] Using template literal for urls
+  - [IMP] Using absolute path for url
+  - [IMP] Using template literal for urls
+  - [IMP] Using absolute path for url
+  - [IMP] Using absolute path for url
+  - [IMP] Using template literal for urls
+  - [IMP] Using template literal for urls
+  - [IMP] Using template literal for url
+  - [IMP] Use template literal
+  - [IMP] command to record e2e tests
+  - [IMP] Using absolute path in interface to access /manage/customers/list
+  - [IMP] path.join unnecessary
+  - [IMP] Added test on creation of template
+  - [IMP] Use absolute url in ui instead of relative. Added test.
+  - [IMP] Use absolute urls rather than relative
+  - [IMP] Removed seemingly dead method
+  - [IMP] Use same schema for response of GET /api/v2/assets/{identifier} and POST /api/v2/cases/{identifier}/assets
+  - [IMP] Added field link on response of GET /api/v2/iocs/{identifier}
+  - [IMP] Added field link on response of POST /api/v2/cases/{identifier}/iocs
+  - [IMP] Added TODO
+  - [IMP] iocs link field is directly incorporated in the schema
+  - [IMP] Removed unused parameter caseid
+  - [IMP] Renamed test
+  - [IMP] Added TODO
+  - [IMP] More succinct code
+  - [IMP] Simple quotes
+  - [IMP] Simple quotes
+  - [MRG] Merge pull request #589 from dfir-iris/create_customer_should_not_require_administrator_rights
+  - [IMP] Manually update dotenv dependency in evtx2splunk
+  - [IMP] Reading administrator API_KEY from .env file
+  - [IMP] Generate projects configuration and avoid test.use
+  - [IMP] Reorganized e2e tests
+  - [IMP] Small typo
+  - [IMP] Simple quotes
+  - [IMP] Added record command to record e2e tests with playwright
+  - [IMP] Simple quotes
+  - [IMP] Simple quotes
+  - [IMP] One import per line
+  - [IMP] One line per import
+  - [IMP] Prefer to explicit the endpoint method
+  - [IMP] Moved socket io event handler out of iris engine into app.blueprints.socket_io_event_handlers
+  - [IMP] Moved access control methods which are used only in the blueprint layer out of app.util into the blueprint layer
+  - [IMP] Documenting that permissions checks are performed in the blueprint layer (rather than business
+  - [IMP] Moved PermissionDeniedError and permissions methods out of the business layer into the graphql blueprint layer
+  - [IMP] Removed a use of permissions_check_current_user_has_some_case_access in the rest layer
+  - [IMP] Removed some uses of permissions_check_current_user_has_some_case_access_stricter by annotation ac_requires_case_identifier
+  - [IMP] Removed unused imports
+  - [IMP] Removed unused import
+  - [IMP] Moved verification of permission for task delete from business layer to blueprint layer
+  - [IMP] Factored method to delete task
+  - [IMP] Moved up permission check from the business layer to the blueprint layer for GET /api/v2/tasks/{identifier}
+  - [IMP] Added permission check for /api/v2/cases/{identifier}
+  - [IMP] Simple quotes
+  - [IMP] Checking permission to access case on the blueprint layer rather than business for ioc
+  - [IMP] Preparing change of iocs_delete signature
+  - [IMP] Have iocs_get raise ObjectNotFoundError when absent
+  - [IMP] Using business layer rather than datamgt layer to retrieve ioc in blueprints
+  - [IMP] Spurious line break
+  - [IMP] Missing line break
+  - [IMP] Moved a permission check up from the business layer into the blueprint layer. Removed one use of PermissionDeniedError
+  - [IMP] Added some typing
+  - [IMP] Removed unnecessary return
+  - [IMP] Reuse assets_get code
+  - [IMP] Removed one use of PermissionDeniedError
+  - [IMP] Missing line breaks
+  - [IMP] Removed one use of PermissionDeniedError
+  - [IMP] Missing line break
+  - [IMP] Uniformize identifier in routes
+  - [IMP] Uniformize identifier in routes
+  - [IMP] Uniformizing identifier in api routes
+  - [IMP] Using identifier in api routes
+  - [IMP] Renaming
+  - [IMP] Removed linked_ioc from return of GET /api/v2/assets/{identifier}
+  - [IMP] Removed one use of permissions_check_current_user_has_some_case_access_stricter
+  - [IMP] Made method private
+  - [IMP] Simplification of the access control code in the case of the API
+  - [IMP] Renamed case identifier
+  - [IMP] Added user identifier in tests user
+  - [IMP] Indentation
+  - [IMP] No need for the state anymore
+  - [IMP] Added TODO
+  - [IMP] Inverted check
+  - [IMP] Made build_filter_ioc_query private
+  - [IMP] Getting last state in a distinct request
+  - [IMP] Using absolute urls, better to find where enpoints are used in the interface
+  - [IMP] Spacing
+  - [IMP] Inverted conditions for improved readability
+  - [IMP] removed unnecessary case_id parameter in case_ioc_dbs.delete_ioc
+  - [IMP] removed unnecessary case_id parameter in case_ioc_dbs.get_ioc, removed unnecessary case_identifier parameter in business.iocs.iocs_update
+  - [IMP] Removed now unused method
+  - [IMP] One import per line
+  - [IMP] Changed value of ioc_type_identifier in test_rest.py
+  - [IMP] Removed console.log in case_ioc.js
+  - [IMP] Removed print(ioc) in case_ioc_routes.py
+  - [IMP] Cleaning import in case_ioc_routes.py
+  - [IMP] Remove {None} in test_rest.py
+  - [IMP] Get tlp_name and linked_cases value part - 2
+  - [IMP] Get tlp_name and linked_cases value
+  - [IMP] Removed unused parameter
+  - [ADD] Added test_get_iocs_should_filter_and_return_ioc_type_identifier
+  - [IMP] Changed build_filter_ioc_query
+  - [IMP] Replaced call to GET /case/ioc/list by GET /api/v2/iocs
+  - [ADD] Started implementation of GET /api/v2/iocs
+  - [IMP] Switch e2e tests from Cypress to Playwright
+  - [IMP] Use of subdirectories in src/pages
+  - [IMP] Wrap demo page in svelte component
+  - [IMP] Wrap login page in svelte component
+  - [DEL] Remove unused JS
+  - [DEL] Remove unused CSS
+  - [IMP] Wrap case page in svelte component
+  - [IMP] Wrap dashboard page in svelte component
+  - [IMP] Svelte + Eslint setup
+  - [IMP] Generate separate sourcemap files for JS in development mode
+  - [DEL] Remove duplicate CSS file
+  - [IMP] Move JS entry files from 'src/' to 'src/pages'
+  - [IMP] Added '$lib' alias to reference modules in 'src/lib'
+  - [IMP] Convert crc32 into a library module (ESM) located under 'src/lib/'.
+  - [MRG] Merge pull request #574 from dfir-iris/split_ui_backend
+  - [IMP] No minify of JS files (for now
+  - [IMP] Move all assets (js, css, ...) into a separate 'ui' folder
+  - [MRG] Merge pull request #568 from dfir-iris/reverting_pin_down_of_cheerio_for_spectaql
+  - [IMP] Upper case
+  - [IMP] Tell cypress to wait for the server to be in CI
+  - [ADD] Execute end to end tests in CI
+  - [ADD] First end to end tests with cypress
+  - [MRG] Merge pull request #566 from temmishy/adding_security_contexts_for_helm_chart
+  - [MRG] Merge pull request #565 from dfir-iris/develop_docker_version
+  - [MRG] Merge pull request #562 from dfir-iris/rest_improvement_assets
+  - [MRG] Merge pull request #564 from dfir-iris/homogenizing_blueprints_structure
+  - [MRG] Merge pull request #559 from dfir-iris/git_workflow_description
+  - [MRG] Merge pull request #541 from lelianthorel/add-concurency-option-to-celery
+  - [UPD] Update docker/webApp/iris-entrypoint.sh
+  - [IMP] Added security contexts, changed values file and resource configuration
+  - [IMP] Set development dockers version to develop. Since it seems we forget to update them.
+  - [IMP] deepsource: Consider using f-strings
+  - [IMP] deepsource: Missing whitespace after ,
+  - [IMP] deepsource: No newline at end of file
+  - [IMP] Specifying that the project follows semantic versioning. Ideally we should describe the API extensivelly. I guess it consists of the REST API/GraphQL API and web interface.
+  - [IMP] Description of git workflow
+  - [IMP] Changed name test_get_asset_with_missing_asset_identifier_should_return_404
+  - [IMP] Improved test_get_asset_with_missing_asset_identifier_should_return_404
+  - [IMP] Change name of function case_view_ioc
+  - [IMP] Replaced response_succes and response_error to response_api_error, response_api_created
+  - [IMP] Change data to textStatus in case.asset.js
+  - [IMP] Changed some code to delete an assets in case_assets_routes
+  - [IMP] Start the name of old URL function name with deprecated_ in case_ioc_routes.py
+  - [IMP] Start the name of old URL function name with deprecated_ in case_task_routes.py
+  - [IMP] Using task_create and task_delete in case_task_routes.py
+  - [IMP] Using tasks_create for /api/v2/caes/caseid/tasks
+  - [IMP] Using task_delete for /api/v2/tasks/task_id
+  - [IMP] rename update, delete, create to tasks_update, tasks_create and tasks_delete
+  - [IMP] Moved code to create an assets down into the business layer
+  - [IMP] Change URL name for POST and DELETE /api/v2/assets/asset_id
+  - [IMP] deepsource: Consider removing the commented out code block
+  - [IMP] deepsource: Appending to dictionary immediately following its definition
+  - [IMP] Imported name is not used anywhere in the module
+  - [IMP] deepsource: f-string used without any expression
+  - [IMP] deepsource: Unnecessary else / elif used after
+  - [IMP] CodeQL: Multiple blank lines detected at end of the file
+  - [IMP] Moved dim tasks routes to namespace app.blueprints.pages
+  - [IMP] Moved login routes to namespace app.blueprints.pages
+  - [IMP] Moved manage routes to namespace app.blueprints.pages
+  - [IMP] Moved /sitemap endpoint to namespace app.blueprints.rest
+  - [IMP] Removed unnecessary comments
+  - [IMP] Spacing
+  - [IMP] Making endpoint POST /manage/attributes/preview more similar to other template endpoints
+  - [IMP] Spacing
+  - [IMP] Moved overview routes to namespace app.blueprints.pages
+  - [IMP] Moved profile routes to namespace app.blueprints.pages
+  - [IMP] Moved removed /user/is-admin route to namespace app.blueprints.rest
+  - [IMP] Moved search route to namespace app.blueprints.pages
+  - [IMP] Moved demo_landing route to namespace app.blueprints.pages
+  - [IMP] Moved datastore routes to namespace app.blueprints.pages
+  - [IMP] Moved dashboard routes to namespace app.blueprints.pages
+  - [IMP] Moved last context route to namespace app.blueprints.rest
+  - [IMP] Moved cases html routes to namespace app.blueprints.pages
+  - [IMP] Moved file into app.blueprints.rest namespace
+  - [IMP] Moved some code into app.business namespace
+  - [IMP] Using full path: it's easier to find where an endpoint is used
+  - [IMP] Using ac_requires instead of ac_api_requires for modal /manage/templates/add/modal
+  - [IMP] Using ac_requires instead of ac_api_requires for modal /manage/cases/add/modal
+  - [IMP] Using ac_requires instead of ac_api_requires for modals /manage/case-templates/add/modal and /manage/case-templates/upload/modal
+  - [IMP] Using ac_requires instead of ac_api_requires for modal /manage/access-control/audit/users/<int:cur_id>/modal
+  - [IMP] Using ac_requires instead of ac_api_requires for modals /global/tasks/add/modal and /global/tasks/update/<int:cur_id>/modal
+  - [IMP] Using ac_case_requires instead of ac_api_requires for model /case/timeline/events/add/modal
+  - [IMP] Using ac_case_requires instead of ac_api_requires for model /case/tasks/add/modal
+  - [IMP] Using ac_case_requires instead of ac_api_requires for model /case/evidences/add/modal
+  - [DEL] Remoed 2 deprecated tests with IOCs relations
+  - [IMP] Removed spurious print
+  - [MRG] Merge branch 'master' into develop
+  - [MRG] Merge pull request #545 from dfir-iris/rest_improvement
+  - [IMP] Change parameter name for test_opendate filter and first ioc filter
+  - [MRG] Merge pull request #540 from lelianthorel/add-limits-requests-to-manifests
+  - [MRG] Merge pull request #529 from dfir-iris/import_coding_rule
+  - [MRG] Merge pull request #528 from dfir-iris/architecture_improvements
+  - [IMP] Removed state_id and owner_id from CaseSchemaForAPIV2
+  - [IMP] Use the same schema for all /api/v2/cases endpoints
+  - [IMP] Added CaseSchemaForV2 to unify types of cases in GET /api/v2/cases, POST /api/v2/cases and GET /api/v2/cases/{identifier}
+  - [IMP] Added an arbitrary large per_page value to be able to retrieve all cases created during a test.
+  - [IMP] Cleaned up imports
+  - [IMP] Added tests on owner and state fields returned by /api/v2/cases
+  - [IMP] Added some note
+  - [IMP] Added test on /manage/users/list for a user without permission
+  - [IMP] Added test on /manage/users/list
+  - [IMP] Added some documentation to dataTable. Converted a dataTable into DataTable
+  - [IMP] Removed spurious console.log
+  - [IMP] Removed unnecessary variables
+  - [IMP] Using 1.10 dataTables option names
+  - [IMP] Alignment
+  - [IMP] Remove whitespace
+  - [IMP] Remove trailing whitespace
+  - [IMP] Reformat the file
+  - [IMP] Remove blank lines
+  - [IMP] Reformat the file
+  - [IMP] Improve indentation for case_notes and dim_task
+  - [IMP] Improve indentation
+  - [IMP] Remove whitespace fro manage_events_categories_routes.py
+  - [IMP] Remove multiple spaces after operator
+  - [IMP] Remove whitespace after opening parenthesis
+  - [IMP] Consider using in
+  - [IMP] Remove f-string unused in case_assets_routes.py
+  - [IMP] Consider removing the commented out code block
+  - [IMP] Appending to dictionary immediately following its definiton
+  - [IMP] Remove the f-string unused
+  - [IMP] Remove the following f-string
+  - [IMP] Remove f-string used without any expression
+  - [IMP] if statement can be merged in manage_groups.py
+  - [IMP] if statement can be merged in case_timeline
+  - [IMP] if statement can be merged in case_timeline_routes
+  - [IMP] Appending to dictionary immediately following its definition
+  - [IMP] Remove imported name is not used anywhere
+  - [IMP] Remove function who is being redefined
+  - [IMP] Remove unused variable found in case_timeline_routes
+  - [IMP] Remove unnecessary else used after return in case_ioc_routes
+  - [IMP] Remove import name who is not used anywhere
+  - [IMP] Remove unnecessary else used after return
+  - [IMP] Remove unused variable found
+  - [IMP] Remove unnecessary else used after return
+  - [IMP] Change unnecessary generator
+  - [IMP] Remove unused variable tinfo
+  - [IMP] Remove unused variable e for Exception
+  - [IMP] Remove unused variable logs line 137
+  - [IMP] Remove unused variable logs
+  - [IMP] Remove unused variable existed
+  - [IMP] Remove unused variable mod_name
+  - [IMP] Change URL name in delete_task
+  - [IMP] Change URL name in add_task
+  - [IMP] Change name for tests_rest.py
+  - [IMP] Change URL name in add_ioc for else case
+  - [IMP] Change URL name in add_ioc
+  - [IMP] Change URL name in delete_ioc
+  - [IMP] Replaced deprecated endpoint in web interface (delete task
+  - [IMP] Replaced deprecated endpoint in web interface (post task
+  - [IMP] Moved some code into the business layer (update task
+  - [IMP] Moved some code into business layer (create task
+  - [IMP] Moved some code into the business layer
+  - [ADD] Starting to separate task business layer from task REST layer.
+  - [IMP] Code factorization in function sendbefore(
+  - [IMP] Added test for filter is_open to GET /api/v2/cases
+  - [IMP] Added filter is_open to GET /api/v2/cases
+  - [IMP] Reuse method notify_api_request_error
+  - [IMP] Using template literal
+  - [IMP] Removed unnecessary variable
+  - [ADD] test enforcing the case_name filter on GET /api/v2/cases
+  - [IMP] Replaced call to GET /manage/cases/filter by GET /api/v2/cases in web interface
+  - [IMP] Removed seemingly unused method
+  - [IMP] Removed seemingly unused method
+  - [IMP] Code factorizatio in function api_error()n
+  - [IMP] Change if condition (=== 'success')' to !== 'nocontent'
+  - [IMP] Removed a whole js file which does not seem to be imported anywhere
+  - [IMP] Added a TODO
+  - [ADD] Started implementation of GET /api/v2/cases
+  - [IMP] Factored parsing of comma separated identifiers
+  - [IMP] The same implementation should be working in both cases
+  - [IMP] Change test_delete_case to test_graphql_update_case_fail_due_to_delete_case
+  - [IMP] Change number parameter in test_rest.py
+  - [IMP] task_delete return 204 instead of 201
+  - [IMP] Change URL name for GET /api/v2/iocs/ioc_id (without state
+  - [IMP] Minor code cleanup
+  - [ADD] create_dummy_case() in test_rest
+  - [DEL] Remove get_ioc
+  - [IMP] Change name of get_iocs in tests
+  - [IMP] Replaced deprecated endpoint in web interface
+  - [DEL] Remove create_ioc
+  - [DEL] rename get_iocs
+  - [DEL] Remove () in get_ioc and rename get_iocs
+  - [DEL] Remove create_ioc in iris.py
+  - [IMP] Change == to === in case.ioc.js
+  - [IMP] indentation
+  - [IMP] Removed now unused second argument of notify_auto_api
+  - [IMP] Replaced some calls to notify_auto_api by api_request_failed
+  - [IMP] Replaced some calls to notify_auto_api by api_request_failed
+  - [IMP] Replaced some calls to notify_auto_api by api_request_failed
+  - [IMP] Replaced some calls to notify_auto_api by api_request_failed
+  - [IMP] Replaced some calls to notify_auto_api by api_request_failed
+  - [IMP] Replaced some calls to notify_auto_api by api_request_failed
+  - [IMP] Replaced some calls to notify_auto_api by api_request_failed
+  - [IMP] Change name for test_delete_ioc_should_return_204
+  - [IMP] Change test_delete_ioc_with_missing_ioc_identifier_should_return_400
+  - [IMP] Simplified some calls to notify_auto_api when parameter silent_success is set
+  - [ADD] ioc_delete return 204 instead of 201
+  - [IMP] Removed unnecessary argument to function call
+  - [IMP] Using api_request_failed
+  - [IMP] Inverted and split condition
+  - [IMP] Separated in distinct instructions
+  - [IMP] Removed spurious spaces
+  - [IMP] Removed unnecessary condition
+  - [IMP] No real need to call notify_auto_api when both silent_success and silent_failure are true: simplified code
+  - [IMP] deprecated /manage/cases/delete/<int:cur_id>
+  - [IMP] message of response in tests when doing a post request
+  - [IMP] Renamed method
+  - [IMP] Simple quote instead of double quote
+  - [IMP] Renamed method
+  - [IMP] uniformed url in deprecated message
+  - [IMP] return 404 when /api/v2/cases/{identifier} is not found
+  - [ADD] DELETE /api/v2/cases/{identifier}
+  - [IMP] Documentation of function ac_fast_check_user_has_case_access
+  - [IMP] Documentation of function
+  - [IMP] Replaced URL name in web interface for /api/v2/iocs
+  - [IMP] Remove unused parameter in test
+  - [IMP] Change URL name for GET /api/v2/iocs/ioc_id (without state
+  - [IMP] Change URL name for GET /api/v2/iocs/ioc_id
+  - [IMP] Change the URL name for DELETE /api/v2/iocs/ioc_id
+  - [ADD] Started DELETE /api/v2/cases/{identifier}
+  - [ADD] Deprecate endpoint /case/exists and replace it with /api/v2/cases/{identifier} in web interface
+  - [IMP] Trying to avoid side-effect in a get function
+  - [ADD] Deprecated /manage/cases/{identifier}
+  - [ADD] Added GET /api/v2/cases/{identifier} endpoint
+  - [IMP] Minor code cleanup
+  - [IMP] Added test on merge alert endpoint
+  - [IMP] create cases using graphql API in graphql tests
+  - [IMP] Renamed post into create in REST tests
+  - [IMP] Improve changes in web interfaces for POST /api/v2/cases/{caseid}/ioc/{iocid}
+  - [ADD] Replaced deprecated /case/ioc/delete/{ioc_id} in web interface
+  - [IMP] Improve test test_create_ioc_with_missing_ioc_value_should_return_400
+  - [IMP] Improve endpoint POST /api/v2/cases/{identifier}/iocs
+  - Endpoint /case/ioc/state deprecated
+  - [IMP] Improve changes in web/interfaces for DELETE /api/v2/cases/{caseid}/ioc/{iocid}
+  - [IMP] Improve changes in web interfaces for POST /api/v2/cases/{caseid}/ioc/{iocid}
+  - [ADD] Replaced deprecated /case/ioc/delete/{ioc_id} in web interface
+  - [IMP] Change POST to GET
+  - [IMP] Improve test test_create_ioc_with_missing_ioc_value_should_return_400
+  - [IMP] Improve endpoint POST /api/v2/cases/{identifier}/iocs
+  - [IMP] Optimize first line
+  - [IMP] Added a test on case creation with a classification identifier set
+  - [IMP] Removed return value which was always True
+  - [IMP] Added a TODO
+  - [IMP] Moved endpoint /api/v2/cases to case_routes
+  - [DEL] Remove ioc_value
+  - [IMP] Change name of parameter compte for counting
+  - [DEL] Delete print() in test_graphql
+  - [IMP] Removed unnecessary else after return and added spaces before open parenthesis
+  - [IMP] Renamed responses into endpoints
+  - [ADD] Deprecation notice on /manage/cases/add
+  - [IMP] Replaced some double-quotes with simple quotes
+  - [IMP] Minor syntactic improvements
+  - [IMP] Moved /alerts REST endpoints into the app.blueprints.rest package
+  - [IMP] Moved /manage/users and /manage/customers REST endpoints into the app.blueprints.rest package
+  - [IMP] Moved /datastore REST endpoints into the app.blueprints.rest package
+  - [IMP] Moved /dashboard REST endpoints into the app.blueprints.rest package
+  - [IMP] Moved /manage/cases REST endpoints into the app.blueprints.rest package
+  - [IMP] Cleaned up import
+  - [IMP] Moved /manage/groups REST endpoints into the app.blueprints.rest package
+  - [IMP] Moved /manage/modules REST endpoints into the app.blueprints.rest package
+  - [IMP] Moved /user REST endpoints into the app.blueprints.rest package
+  - [IMP] Moved /manage/alert-status REST endpoints into the app.blueprints.rest package
+  - [IMP] Moved /manage/asset-type REST endpoints into the app.blueprints.rest package
+  - [IMP] Moved /manage/case-classifications/search REST endpoints into the app.blueprints.rest package
+  - [IMP] Moved /manage/case-templates REST endpoints into the app.blueprints.rest package
+  - [IMP] Moved /manage/evidence-types REST endpoints into the app.blueprints.rest package
+  - [IMP] Moved /manage/ioc-types REST endpoints into the app.blueprints.rest package
+  - [IMP] Moved /manage/analysis-status REST endpoints into the app.blueprints.rest package
+  - [IMP] Moved /manage/case-states REST endpoints into the app.blueprints.rest package
+  - [IMP] Moved /manage/templates REST endpoints into the app.blueprints.rest package
+  - [IMP] Moved /filters REST endpoints into the app.blueprints.rest package
+  - [IMP] Moved back /case/timeline/events/add/modal, it is not a REST endpoint
+  - [IMP] Moved /manage/access-control REST endpoints into the app.blueprints.rest package
+  - [IMP] Moved /manage/event-categories REST endpoints into the app.blueprints.rest package
+  - [IMP] Moved /manage/severities REST endpoints into the app.blueprints.rest package
+  - [IMP] Moved /manage/server REST endpoints into the app.blueprints.rest package
+  - [IMP] Moved /manage/tags REST endpoints into the app.blueprints.rest package
+  - [IMP] Moved /manage/attributes REST endpoints into the app.blueprints.rest package
+  - [IMP] Moved /manage/task-status REST endpoints into the app.blueprints.rest package
+  - [IMP] Moved /manage/tlp REST endpoints into the app.blueprints.rest package
+  - [IMP] Moved /case/report REST endpoints into the app.blueprints.rest package
+  - [IMP] Moved /dim/tasks REST endpoint into the app.blueprints.rest package
+  - [IMP] Moved /api REST endpoint into the app.blueprints.rest package
+  - [IMP] Moved /overview REST endpoint into the app.blueprints.rest package
+  - [IMP] Moved /context/search-cases REST endpoint into the app.blueprints.rest package
+  - [IMP] Moved /manage/assets REST endpoint into the app.blueprints.rest package
+  - [IMP] Moved /search REST endpoint into the app.blueprints.rest package
+  - [IMP] Moved /activities REST endpoints into the app.blueprints.rest package
+  - [IMP] Renamed file
+  - [IMP] Removed now unused function ac_api_case_requires
+  - [IMP] Converted some calls to ac_api_case_requires into ac_api_requires+ac_requires_case_identifier
+  - [IMP] Converted some calls to ac_api_case_requires into ac_api_requires+ac_requires_case_identifier
+  - [IMP] Converted some calls to ac_api_case_requires into ac_api_requires+ac_requires_case_identifier
+  - [IMP] Converted some calls to ac_api_case_requires into ac_api_requires+ac_requires_case_identifier
+  - [IMP] Converted some calls to ac_api_case_requires into ac_api_requires+ac_requires_case_identifier
+  - Delete DOCUMENTATION.md
+  - [IMP] Converted some calls to ac_api_case_requires into ac_api_requires+ac_requires_case_identifier
+  - [IMP] Converted some calls to ac_api_case_requires into ac_api_requires+ac_requires_case_identifier
+  - [IMP] Some more TODO
+  - [IMP] Converted some calls to ac_api_case_requires into ac_api_requires+ac_requires_case_identifier
+  - [IMP] Added possibility to check access_level with ac_requires_case_identifier
+  - [IMP] Added TODO
+  - [IMP] Converted double quotes to simple quotes
+  - [IMP] Removed unnecessary else after return
+  - [IMP] Removed unnecessary else after return
+  - [IMP] Factored code to check CSRF token
+  - [IMP] Removed method which was never called
+  - [IMP] Minor code clarifications
+  - [IMP] Removed unnecessary else
+  - [IMP] Made method private
+  - [IMP] Grouped registration of blueprints
+  - [IMP] Grouping methods
+  - [IMP] Moved /dim/hooks REST endpoints in rest package
+  - [IMP] Moved /case/timeline REST endpoints in rest package
+  - [IMP] Moved /case/tasks REST endpoints in rest package
+  - [IMP] Moved /case REST endpoints in rest package
+  - [IMP] Moved /case/evidences REST endpoints in rest package
+  - [IMP] Moved /case/notes REST endpoints in rest package
+  - [IMP] Split tests into tests_rest and tests_graphql
+  - [IMP] Moved /case/ioc REST endpoints in rest package
+  - [IMP] Moved /case/graph/getdata REST endpoint in rest package
+  - [IMP] Created package case in rest
+  - [IMP] Moved /case/assets/ REST endpoints in rest package
+  - [IMP] Replacing some multiple imports per line into one import per line
+  - [IMP] Mount source code in dev docker compose file to avoid having to rebuild the dockers after each modification
+  - [IMP] Catching PermissionDeniedError
+  - [IMP] Removed unnecessary imports
+  - [IMP] Moved up permissions_check_current_user_has_some_case_access
+  - [IMP] Moved up permissions_check_current_user_has_some_case_access
+  - [IMP] Moved up permissions_check_current_user_has_some_case_access
+  - [IMP] Moved up permissions_check_current_user_has_some_case_access_stricter
+  - [IMP] Moved up permissions_check_current_user_has_some_case_access_stricter
+  - [IMP] Now removed unnecessary import
+  - [IMP] Moved up permissions_check_current_user_has_some_case_access_stricter
+  - [IMP] Moved up permissions_check_current_user_has_some_case_access_stricter
+  - [IMP] Renamed method belonging to public API so that it does not start with _
+  - [IMP] Moving up permission check
+  - [IMP] Inlined method
+  - [IMP] Moved up export_case_iocs_json in the business layer: no more imports of the business layer from the datamgmt layer
+  - [IMP] Moved up export_case_json_for_report in the business layer
+  - [IMP] Moved up export_case_json in the business layer
+  - [IMP] Added another forbidden import in the architectural notes
+  - [IMP] Added another forbidden import in the architectural notes
+  - [IMP] Moved up permissions_check_current_user_has_some_case_access_stricter into the graphql layer
+  - [IMP] The roles of the worker and celery are not clear...
+  - [ADD] Started a markdown with a some architectural notes
+  - [ADD] option to select Number of child processes processing the queue for celery
+  - remove old comment
+  - [ADD] devcontainer configuration
+  - Link IOC directly to case
+
+---
+
