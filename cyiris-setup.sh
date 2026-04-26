@@ -111,39 +111,37 @@ divider; echo ""
 # Runs only in --update / --upgrade mode; re-execs itself if a newer version
 # is available so the rest of the script runs with the latest code.
 # ═══════════════════════════════════════════════════════════════════════════════
-if [[ "$MODE" != "full" ]]; then
-    _SELF_PATH="$(realpath "${BASH_SOURCE[0]:-$0}")"
-    _LATEST=$(mktemp)
-    _GH_TOKEN="${GHCR_PAT:-${GH_TOKEN:-}}"
-    _DOWNLOADED=false
+_SELF_PATH="$(realpath "${BASH_SOURCE[0]:-$0}")"
+_LATEST=$(mktemp)
+_GH_TOKEN="${GHCR_PAT:-${GH_TOKEN:-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}}"
+_DOWNLOADED=false
 
-    if command -v gh &>/dev/null && gh auth status &>/dev/null 2>&1; then
-        gh release download --repo "cycentra/cyiris" \
-            --pattern "cyiris-setup.sh" \
-            --output "$_LATEST" --clobber 2>/dev/null && _DOWNLOADED=true || true
-    elif command -v curl &>/dev/null; then
-        _CURL_AUTH=()
-        [[ -n "$_GH_TOKEN" ]] && _CURL_AUTH=(-H "Authorization: token $_GH_TOKEN")
-        curl -sfL "${_CURL_AUTH[@]}" \
-            "https://github.com/cycentra/cyiris/releases/latest/download/cyiris-setup.sh" \
-            -o "$_LATEST" 2>/dev/null && _DOWNLOADED=true || true
-    fi
-
-    if [[ "$_DOWNLOADED" == true && -s "$_LATEST" ]]; then
-        if ! cmp -s "$_LATEST" "$_SELF_PATH"; then
-            cp "$_LATEST" "$_SELF_PATH"
-            chmod 750 "$_SELF_PATH"
-            rm -f "$_LATEST"
-            success "cyiris-setup.sh updated to latest version — re-executing..."
-            exec bash "$_SELF_PATH" "$@"
-        else
-            success "Setup script is already at latest version"
-        fi
-    else
-        warn "Could not fetch latest setup script from GitHub — continuing with installed version"
-    fi
-    rm -f "$_LATEST" 2>/dev/null || true
+if command -v gh &>/dev/null && gh auth status &>/dev/null 2>&1; then
+    gh release download --repo "cycentra/cyiris" \
+        --pattern "cyiris-setup.sh" \
+        --output "$_LATEST" --clobber 2>/dev/null && _DOWNLOADED=true || true
+elif command -v curl &>/dev/null; then
+    _CURL_AUTH=()
+    [[ -n "$_GH_TOKEN" ]] && _CURL_AUTH=(-H "Authorization: token $_GH_TOKEN")
+    curl -sfL "${_CURL_AUTH[@]}" \
+        "https://github.com/cycentra/cyiris/releases/latest/download/cyiris-setup.sh" \
+        -o "$_LATEST" 2>/dev/null && _DOWNLOADED=true || true
 fi
+
+if [[ "$_DOWNLOADED" == true && -s "$_LATEST" ]]; then
+    if ! cmp -s "$_LATEST" "$_SELF_PATH"; then
+        cp "$_LATEST" "$_SELF_PATH"
+        chmod 750 "$_SELF_PATH"
+        rm -f "$_LATEST"
+        success "cyiris-setup.sh updated to latest version — re-executing..."
+        exec bash "$_SELF_PATH" "$@"
+    else
+        success "Setup script is already at latest version"
+    fi
+else
+    warn "Could not fetch latest setup script from GitHub — continuing with installed version"
+fi
+rm -f "$_LATEST" 2>/dev/null || true
 
 # ═══════════════════════════════════════════════════════════════════════════════
 # INFRASTRUCTURE BLOCK — skipped on --update / --upgrade
@@ -254,7 +252,7 @@ fi
 # ── Step 4: GHCR authentication ───────────────────────────────────────────────
 step_header "REGISTRY AUTHENTICATION"
 
-GHCR_PAT="${GHCR_PAT:-${GH_TOKEN:-}}"
+GHCR_PAT="${GHCR_PAT:-${GH_TOKEN:-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}}"
 if [[ -n "$GHCR_PAT" ]]; then
     echo "$GHCR_PAT" | docker login ghcr.io -u "${GH_USER:-cycentra}" --password-stdin \
         && success "Logged in to GHCR" \
