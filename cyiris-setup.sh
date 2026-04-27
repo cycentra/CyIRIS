@@ -245,7 +245,8 @@ fi
 if crontab -l 2>/dev/null | grep -q "docker-maintenance.sh"; then
     success "Docker maintenance cron already scheduled — skipping"
 else
-    (crontab -l 2>/dev/null; echo "0 2 */15 * * ${_MAINT_DEST} >> ${DEPLOY_DIR}/docker-maintenance.log 2>&1") | crontab -
+    mkdir -p /var/log/cycentra
+    (crontab -l 2>/dev/null; echo "0 2 */15 * * ${_MAINT_DEST} >> /var/log/cycentra/docker-maintenance.log 2>&1") | crontab -
     success "Cron scheduled: docker-maintenance.sh runs every 15 days at 02:00"
 fi
 
